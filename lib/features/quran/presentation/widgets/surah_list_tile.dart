@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../providers/quran_reader_notifier.dart';
 import '../providers/quran_menu_provider.dart';
 
-/// A single Surah row in the menu list.
-class SurahListTile extends StatelessWidget {
+class SurahListTile extends ConsumerWidget {
   const SurahListTile({super.key, required this.surah, required this.onTap});
 
   final SurahInfo surah;
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
     return ListTile(
       onTap: onTap,
-      // Surah number badge on the trailing side (LTR position = leading in RTL)
       trailing: Container(
         width: 40,
         height: 40,

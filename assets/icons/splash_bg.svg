@@ -1,0 +1,22 @@
+<svg width="1080" height="1920" viewBox="0 0 1080 1920" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="1080" height="1920" fill="#F8FAFC"/>
+<!-- Pattern Repeat -->
+<pattern id="islamic_pattern" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
+<path d="M50 0 L100 50 L50 100 L0 50 Z" fill="none" stroke="#E2E8F0" stroke-width="2"/>
+<circle cx="50" cy="50" r="10" fill="#E2E8F0" opacity="0.3"/>
+</pattern>
+<rect width="1080" height="1920" fill="url(#islamic_pattern)" opacity="0.5"/>
+
+<!-- Logo Placement Placeholder (Center) -->
+<!-- Intent is for developer to place logo.svg on top -->
+<circle cx="540" cy="800" r="150" fill="#007A33"/>
+<path d="M540 680 L590 800 H710 L610 880 L650 1000 L540 920 L430 1000 L470 880 L370 800 H490 L540 680Z" fill="#D4AF37"/>
+<!-- Book Stylized -->
+<path d="M540 920 V820 C540 820 574 820 604 840 V940 C574 920 540 920 540 920 Z" fill="#FFFFFF"/>
+<path d="M540 920 V820 C540 820 506 820 476 840 V940 C506 920 540 920 540 920 Z" fill="#E6E6E6"/>
+
+<!-- Text Placeholder -->
+<path d="M390 1100 H690 V1150 H390 Z" fill="#007A33" opacity="0.1"/> 
+<!-- Since fonts are hard in SVG without embedding, just shapes for layout -->
+
+</svg>

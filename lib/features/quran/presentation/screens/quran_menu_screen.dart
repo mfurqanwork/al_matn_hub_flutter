@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../providers/quran_menu_provider.dart';
@@ -16,12 +17,19 @@ class QuranMenuScreen extends ConsumerWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(
-            'Holy Quran',
-            style: theme.textTheme.titleLarge?.copyWith(
-              fontFamily: 'Amiri',
-              fontWeight: FontWeight.bold,
-            ),
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SvgPicture.asset('assets/icons/logo.svg', width: 28, height: 28),
+              const SizedBox(width: 8),
+              Text(
+                'Holy Quran',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontFamily: 'Amiri',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
           centerTitle: true,
           bottom: const TabBar(
@@ -123,7 +131,16 @@ class _SurahTabBody extends ConsumerWidget {
           child: TextField(
             decoration: InputDecoration(
               hintText: 'Search surah...',
-              prefixIcon: const Icon(Icons.search),
+              prefixIcon: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: SvgPicture.asset(
+                  'assets/icons/ic_search.svg',
+                  colorFilter: ColorFilter.mode(
+                    theme.colorScheme.primary,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
               ),

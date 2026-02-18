@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -39,7 +40,8 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
   }
 
   void _precacheNearby(int page) {
-    for (int offset = -2; offset <= 2; offset++) {
+    // Preload ±5 pages for smooth transitions
+    for (int offset = -5; offset <= 5; offset++) {
       final p = page + offset;
       if (p < 1 || p > AppConstants.totalPages) continue;
       precacheImage(AssetImage(pageAssetPath(p)), context);
@@ -83,6 +85,8 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
             controller: _pageController,
             // reverse=false: swipe RIGHT → next page (requested Mushaf behavior)
             reverse: false,
+            // Enables pre-rendering of neighboring pages
+            allowImplicitScrolling: true,
             itemCount: AppConstants.totalPages,
             onPageChanged: (viewIndex) {
               final realPage = viewIndexToPage(viewIndex);
@@ -194,13 +198,27 @@ class _TopBar extends StatelessWidget {
         children: [
           // Menu
           IconButton(
-            icon: const Icon(Icons.menu, color: Colors.white),
-            tooltip: 'Menu',
-            onPressed: onMenuTap,
+            icon: SvgPicture.asset(
+              'assets/icons/ic_home.svg',
+              colorFilter: const ColorFilter.mode(
+                Color(0xFF007A33),
+                BlendMode.srcIn,
+              ),
+              width: 24,
+            ),
+            tooltip: 'Home',
+            onPressed: () => context.go('/home'),
           ),
           // Bookmark list
           IconButton(
-            icon: const Icon(Icons.bookmarks_outlined, color: Colors.white),
+            icon: SvgPicture.asset(
+              'assets/icons/ic_bookmarks_list.svg',
+              colorFilter: const ColorFilter.mode(
+                Color(0xFF007A33),
+                BlendMode.srcIn,
+              ),
+              width: 24,
+            ),
             tooltip: 'Bookmarks',
             onPressed: onBookmarkListTap,
           ),
@@ -218,9 +236,13 @@ class _TopBar extends StatelessWidget {
           const Spacer(),
           // Bookmark toggle
           IconButton(
-            icon: Icon(
-              isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-              color: isBookmarked ? const Color(0xFFFFD700) : Colors.white,
+            icon: SvgPicture.asset(
+              'assets/icons/ic_bookmark.svg',
+              colorFilter: ColorFilter.mode(
+                isBookmarked ? const Color(0xFF007A33) : Colors.white,
+                BlendMode.srcIn,
+              ),
+              width: 24,
             ),
             tooltip: isBookmarked ? 'Remove bookmark' : 'Add bookmark',
             onPressed: onBookmarkToggle,
@@ -320,7 +342,14 @@ class _BookmarkSheet extends StatelessWidget {
                         final page = bookmarks[i];
                         final label = pageOverlayLabel(page);
                         return ListTile(
-                          leading: const Icon(Icons.bookmark),
+                          leading: SvgPicture.asset(
+                            'assets/icons/ic_bookmark.svg',
+                            width: 24,
+                            colorFilter: const ColorFilter.mode(
+                              Color(0xFF007A33),
+                              BlendMode.srcIn,
+                            ),
+                          ),
                           title: Text(
                             label,
                             style: const TextStyle(fontFamily: 'Amiri'),

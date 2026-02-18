@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../providers/quran_reader_notifier.dart';
 
 import '../../../../core/utils/quran_helpers.dart';
 
-/// A single Mushaf page rendered from the bundled .webp asset.
-/// Wrapped in [InteractiveViewer] for pinch-zoom (0.9×–4×).
-/// This widget is intentionally const and has no state – all
-/// state lives in QuranReaderNotifier.
-class QuranPageWidget extends StatelessWidget {
+class QuranPageWidget extends ConsumerWidget {
   const QuranPageWidget({super.key, required this.pageNum});
 
   final int pageNum;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isBookmarked = ref.watch(
+      quranReaderNotifierProvider.select(
+        (value) => value.value?.isBookmarked(pageNum) ?? false,
+      ),
+    );
+
     return RepaintBoundary(
       child: InteractiveViewer(
         minScale: 0.9,
@@ -23,8 +28,8 @@ class QuranPageWidget extends StatelessWidget {
             fit: BoxFit.contain,
             width: double.infinity,
             height: double.infinity,
-            // Cachewidth hint: feed Flutter's image cache with the
-            // physical pixel width so it doesn't keep over-sized bitmaps.
+            gaplessPlayback: true,
+            filterQuality: FilterQuality.medium,
             cacheWidth: MediaQuery.sizeOf(context).width.toInt() * 2,
             errorBuilder: (context2, error, stackTrace) =>
                 _PageErrorWidget(page: pageNum),
