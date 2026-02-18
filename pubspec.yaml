@@ -1,5 +1,5 @@
 name: al_matn_hub_flutter
-description: "A new Flutter project."
+description: "Al Matn Hub is a comprehensive Islamic application that provides users with the ability to read, search the Quran."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev

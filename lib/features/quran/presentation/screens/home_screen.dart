@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import '../providers/quran_reader_notifier.dart';
+import '../../../../core/utils/quran_helpers.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final readerState = ref.watch(quranReaderNotifierProvider);
+
+    final lastReadPage = readerState.value?.currentPage ?? 1;
+    final lastReadLabel = pageOverlayLabel(lastReadPage);
 
     return Scaffold(
       appBar: AppBar(
@@ -51,9 +58,19 @@ class HomeScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '$lastReadLabel · Page $lastReadPage',
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 16,
+                      fontFamily: 'Amiri',
+                    ),
+                  ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () => context.go('/quran'),
+                    onPressed: () =>
+                        context.go('/quran/reader?page=$lastReadPage'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color(0xFF007A33),
@@ -81,7 +98,7 @@ class HomeScreen extends StatelessWidget {
                 _ActionCard(
                   title: 'Last Read',
                   icon: 'assets/icons/ic_bookmark.svg',
-                  onTap: () => context.go('/quran'),
+                  onTap: () => context.go('/quran/reader?page=$lastReadPage'),
                 ),
                 _ActionCard(
                   title: 'Search surah',

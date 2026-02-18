@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../providers/quran_menu_provider.dart';
+import '../providers/quran_reader_notifier.dart';
+import '../../../../core/utils/quran_helpers.dart';
 import '../widgets/surah_list_tile.dart';
 
 class QuranMenuScreen extends ConsumerWidget {
@@ -12,6 +14,9 @@ class QuranMenuScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final readerState = ref.watch(quranReaderNotifierProvider);
+    final lastReadPage = readerState.value?.currentPage ?? 1;
+    final lastReadLabel = pageOverlayLabel(lastReadPage);
 
     return DefaultTabController(
       length: 2,
@@ -23,7 +28,7 @@ class QuranMenuScreen extends ConsumerWidget {
               SvgPicture.asset('assets/icons/logo.svg', width: 28, height: 28),
               const SizedBox(width: 8),
               Text(
-                'Holy Quran',
+                'Quran',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontFamily: 'Amiri',
                   fontWeight: FontWeight.bold,
@@ -32,18 +37,94 @@ class QuranMenuScreen extends ConsumerWidget {
             ],
           ),
           centerTitle: true,
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: 'Juz'),
-              Tab(text: 'Surahs'),
-            ],
-          ),
         ),
-        body: TabBarView(
+        body: Column(
           children: [
-            _JuzGrid(onJuzSelected: (page) => _openReader(context, page)),
-            _SurahTabBody(
-              onSurahSelected: (page) => _openReader(context, page),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: InkWell(
+                onTap: () => _openReader(context, lastReadPage),
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF007A33), Color(0xFF005C26)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF007A33).withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/ic_quran.svg',
+                        width: 32,
+                        height: 32,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.white,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Continue Reading',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '$lastReadLabel · Page $lastReadPage',
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 13,
+                                fontFamily: 'Amiri',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                        size: 16,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            TabBar(
+              labelColor: theme.colorScheme.primary,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: theme.colorScheme.primary,
+              tabs: const [
+                Tab(text: 'Juz'),
+                Tab(text: 'Surahs'),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  _JuzGrid(onJuzSelected: (page) => _openReader(context, page)),
+                  _SurahTabBody(
+                    onSurahSelected: (page) => _openReader(context, page),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
