@@ -19,7 +19,7 @@ class BookmarksScreen extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             SvgPicture.asset(
-              'assets/icons/ic_bookmarks_list.svg',
+              'assets/icons/ic_bookmark.svg',
               width: 24,
               height: 24,
               colorFilter: ColorFilter.mode(
