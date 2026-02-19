@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../features/quran/presentation/screens/quran_menu_screen.dart';
 import '../features/quran/presentation/screens/quran_reader_screen.dart';

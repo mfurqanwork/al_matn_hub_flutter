@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../providers/quran_reader_notifier.dart';
 import '../providers/quran_menu_provider.dart';
 
 class SurahListTile extends ConsumerWidget {

@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../providers/quran_reader_notifier.dart';
 
 import '../../../../core/utils/quran_helpers.dart';
 
-class QuranPageWidget extends ConsumerWidget {
+/// Legacy image-based Quran page widget (kept as backup).
+/// The app now uses qcf_quran's PageviewQuran for rendering.
+class QuranPageWidget extends StatelessWidget {
   const QuranPageWidget({super.key, required this.pageNum});
 
   final int pageNum;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isBookmarked = ref.watch(
-      quranReaderNotifierProvider.select(
-        (value) => value.value?.isBookmarked(pageNum) ?? false,
-      ),
-    );
-
+  Widget build(BuildContext context) {
     return RepaintBoundary(
       child: InteractiveViewer(
         minScale: 0.9,

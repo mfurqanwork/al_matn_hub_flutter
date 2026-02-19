@@ -44,6 +44,9 @@ dependencies:
   # Quran metadata (surah/juz/page mapping) – tiny, offline
   quran: ^1.4.1
 
+  # QCF font-based Mushaf rendering (vector fonts, no images needed)
+  qcf_quran: ^0.0.4
+
   # Persistence
   shared_preferences: ^2.5.0
 
@@ -76,5 +79,4 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/quran/
-    - assets/icons/
+    - assets/

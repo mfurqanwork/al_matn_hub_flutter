@@ -2,11 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qcf_quran/qcf_quran.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/quran_helpers.dart';
 import '../providers/quran_reader_notifier.dart';
-import '../widgets/quran_page_widget.dart';
+
+// ── Medinah Mushaf Color Palette ─────────────────────────────────────────────
+const _kMushafCream = Color(0xFFFDF8F0); // warm parchment background
+const _kMushafText = Color(0xFF1A1A1A); // near-black for text
+const _kMushafGold = Color(0xFFB8860B); // dark golden rod
+const _kMushafGoldLight = Color(0xFFD4AF37); // classic gold
+const _kMushafGreen = Color(0xFF007A33); // Islamic green
+const _kMushafBrown = Color(0xFF6B3A2A); // verse number color
+const _kFrameBorder = Color(0xFFC9A96E); // warm gold for border frames
 
 class QuranReaderScreen extends ConsumerStatefulWidget {
   const QuranReaderScreen({super.key, required this.initialPage});
@@ -18,34 +26,19 @@ class QuranReaderScreen extends ConsumerStatefulWidget {
 }
 
 class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
-  late final PageController _pageController;
   bool _didSyncInitialPage = false;
+  late final PageController _externalController;
 
   @override
   void initState() {
     super.initState();
-    final viewIndex = pageToViewIndex(widget.initialPage);
-    _pageController = PageController(initialPage: viewIndex);
-
-    // Precache the initial spread (±2 pages) after first frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _precacheNearby(widget.initialPage);
-    });
+    _externalController = PageController(initialPage: widget.initialPage - 1);
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _externalController.dispose();
     super.dispose();
-  }
-
-  void _precacheNearby(int page) {
-    // Preload ±5 pages for smooth transitions
-    for (int offset = -5; offset <= 5; offset++) {
-      final p = page + offset;
-      if (p < 1 || p > AppConstants.totalPages) continue;
-      precacheImage(AssetImage(pageAssetPath(p)), context);
-    }
   }
 
   @override
@@ -53,10 +46,11 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
     final readerAsync = ref.watch(quranReaderNotifierProvider);
 
     return Scaffold(
-      // No AppBar – full-screen immersive reader
-      backgroundColor: Colors.black,
+      backgroundColor: _kMushafCream,
       body: readerAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: _kMushafGreen),
+        ),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (reader) => _buildReader(context, reader),
       ),
@@ -75,59 +69,89 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
       }
     }
 
-    return Stack(
-      children: [
-        // ── Page view ──────────────────────────────────────────────────
-        GestureDetector(
-          onTap: () =>
-              ref.read(quranReaderNotifierProvider.notifier).toggleControls(),
-          child: PageView.builder(
-            controller: _pageController,
-            // reverse=false: swipe RIGHT → next page (requested Mushaf behavior)
-            reverse: false,
-            // Enables pre-rendering of neighboring pages
-            allowImplicitScrolling: true,
-            itemCount: AppConstants.totalPages,
-            onPageChanged: (viewIndex) {
-              final realPage = viewIndexToPage(viewIndex);
-              ref
-                  .read(quranReaderNotifierProvider.notifier)
-                  .updatePage(realPage);
-              _precacheNearby(realPage);
-            },
-            itemBuilder: (context, viewIndex) {
-              final pageNum = viewIndexToPage(viewIndex);
-              return QuranPageWidget(pageNum: pageNum);
-            },
-          ),
-        ),
+    final page = reader.currentPage;
+    final pageData = getPageData(page);
+    final firstSurah = int.parse(pageData.first['surah'].toString());
+    final firstVerse = int.parse(pageData.first['start'].toString());
+    final surahNameAr = getSurahNameArabic(firstSurah);
+    final juzNum = getJuzNumber(firstSurah, firstVerse);
 
-        // ── Top overlay ────────────────────────────────────────────────
-        AnimatedPositioned(
-          duration: const Duration(milliseconds: 250),
-          top: reader.controlsVisible ? 0 : -100,
-          left: 0,
-          right: 0,
-          child: _TopBar(
-            page: reader.currentPage,
-            isBookmarked: reader.isBookmarked(reader.currentPage),
+    return SafeArea(
+      child: Column(
+        children: [
+          // ── Mushaf Header ──────────────────────────────────────────
+          _MushafHeader(
+            surahNameAr: surahNameAr,
+            juzNum: juzNum,
+            page: page,
+            isBookmarked: reader.isBookmarked(page),
             onBookmarkToggle: () => ref
                 .read(quranReaderNotifierProvider.notifier)
-                .toggleBookmark(reader.currentPage),
-            onMenuTap: () => context.go('/quran'),
-            onBookmarkListTap: () => _showBookmarkSheet(context),
+                .toggleBookmark(page),
           ),
-        ),
 
-        // ── Bottom overlay ─────────────────────────────────────────────
-        AnimatedPositioned(
-          duration: const Duration(milliseconds: 250),
-          bottom: reader.controlsVisible ? 0 : -80,
-          left: 0,
-          right: 0,
-          child: _BottomBar(page: reader.currentPage),
-        ),
-      ],
+          // ── QCF Page Content ──────────────────────────────────────
+          Expanded(
+            child: Stack(
+              children: [
+                // Mushaf page with decorative border
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  decoration: BoxDecoration(
+                    color: _kMushafCream,
+                    border: Border.symmetric(
+                      vertical: BorderSide(
+                        color: _kFrameBorder.withAlpha(80),
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
+                  child: GestureDetector(
+                    onTap: () => ref
+                        .read(quranReaderNotifierProvider.notifier)
+                        .toggleControls(),
+                    child: PageviewQuran(
+                      controller: _externalController,
+                      initialPageNumber: widget.initialPage,
+                      onPageChanged: (p) {
+                        ref
+                            .read(quranReaderNotifierProvider.notifier)
+                            .updatePage(p);
+                      },
+                      theme: QcfThemeData(
+                        pageBackgroundColor: _kMushafCream,
+                        verseTextColor: _kMushafText,
+                        verseNumberColor: _kMushafBrown,
+                        basmalaColor: _kMushafText,
+                        headerTextColor: _kMushafGold,
+                        headerBackgroundColor: Colors.transparent,
+                        horizontalPadding: 8,
+                        verticalPadding: 4,
+                      ),
+                    ),
+                  ),
+                ),
+
+                // ── Controls Overlay (toggle on tap) ──────────────────
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 250),
+                  top: reader.controlsVisible ? 0 : -80,
+                  left: 0,
+                  right: 0,
+                  child: _ControlsBar(
+                    onHomeTap: () => context.go('/home'),
+                    onBookmarkListTap: () => _showBookmarkSheet(context),
+                    onMenuTap: () => context.go('/quran'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ── Mushaf Footer ──────────────────────────────────────────
+          _MushafFooter(page: page),
+        ],
+      ),
     );
   }
 
@@ -146,8 +170,7 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
             bookmarks: bookmarks,
             onPageSelected: (page) {
               Navigator.pop(ctx);
-              final viewIndex = pageToViewIndex(page);
-              _pageController.jumpToPage(viewIndex);
+              context.go('/quran/reader?page=$page');
             },
             onRemove: (page) => ref
                 .read(quranReaderNotifierProvider.notifier)
@@ -159,133 +182,207 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
   }
 }
 
-// ── Top bar ───────────────────────────────────────────────────────────────────
+// ── Mushaf Header (Surah name + Juz + Bookmark) ──────────────────────────────
 
-class _TopBar extends StatelessWidget {
-  const _TopBar({
+class _MushafHeader extends StatelessWidget {
+  const _MushafHeader({
+    required this.surahNameAr,
+    required this.juzNum,
     required this.page,
     required this.isBookmarked,
     required this.onBookmarkToggle,
-    required this.onMenuTap,
-    required this.onBookmarkListTap,
   });
 
+  final String surahNameAr;
+  final int juzNum;
   final int page;
   final bool isBookmarked;
   final VoidCallback onBookmarkToggle;
-  final VoidCallback onMenuTap;
-  final VoidCallback onBookmarkListTap;
 
   @override
   Widget build(BuildContext context) {
-    final label = pageOverlayLabel(page);
-
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Colors.black87, Colors.transparent],
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: _kMushafCream,
+        border: Border(
+          bottom: BorderSide(color: _kFrameBorder.withAlpha(120), width: 1.5),
         ),
-      ),
-      padding: EdgeInsets.only(
-        top: MediaQuery.paddingOf(context).top + 4,
-        left: 8,
-        right: 8,
-        bottom: 12,
       ),
       child: Row(
         children: [
-          // Menu
-          IconButton(
-            icon: SvgPicture.asset(
-              'assets/icons/ic_home.svg',
-              colorFilter: const ColorFilter.mode(
-                Color(0xFF007A33),
-                BlendMode.srcIn,
-              ),
-              width: 24,
-            ),
-            tooltip: 'Home',
-            onPressed: () => context.go('/home'),
-          ),
-          // Bookmark list
-          IconButton(
-            icon: SvgPicture.asset(
-              'assets/icons/ic_bookmarks_list.svg',
-              colorFilter: const ColorFilter.mode(
-                Color(0xFF007A33),
-                BlendMode.srcIn,
-              ),
-              width: 24,
-            ),
-            tooltip: 'Bookmarks',
-            onPressed: onBookmarkListTap,
-          ),
+          // Juz number (left side, matching traditional Mushaf layout)
+          _OrnamentedLabel(text: 'الجزء $juzNum'),
           const Spacer(),
-          // Surah / Juz label
-          Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontFamily: 'Amiri',
-              fontSize: 14,
-              shadows: [Shadow(blurRadius: 4)],
-            ),
-          ),
-          const Spacer(),
-          // Bookmark toggle
-          IconButton(
-            icon: SvgPicture.asset(
+          // Bookmark icon
+          GestureDetector(
+            onTap: onBookmarkToggle,
+            child: SvgPicture.asset(
               'assets/icons/ic_bookmark.svg',
+              width: 22,
               colorFilter: ColorFilter.mode(
-                isBookmarked ? const Color(0xFF007A33) : Colors.white,
+                isBookmarked ? _kMushafGreen : _kFrameBorder.withAlpha(120),
                 BlendMode.srcIn,
               ),
-              width: 24,
             ),
-            tooltip: isBookmarked ? 'Remove bookmark' : 'Add bookmark',
-            onPressed: onBookmarkToggle,
           ),
+          const Spacer(),
+          // Surah name (right side, matching traditional Mushaf layout)
+          _OrnamentedLabel(text: 'سورة $surahNameAr'),
         ],
       ),
     );
   }
 }
 
-// ── Bottom bar ────────────────────────────────────────────────────────────────
+// ── Ornamented label (mimics Mushaf decorative text frames) ──────────────────
 
-class _BottomBar extends StatelessWidget {
-  const _BottomBar({required this.page});
+class _OrnamentedLabel extends StatelessWidget {
+  const _OrnamentedLabel({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: _kFrameBorder, width: 1.2),
+        gradient: LinearGradient(
+          colors: [
+            _kMushafGoldLight.withAlpha(20),
+            _kMushafGoldLight.withAlpha(40),
+            _kMushafGoldLight.withAlpha(20),
+          ],
+        ),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontFamily: 'Amiri',
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: _kMushafGold,
+          letterSpacing: 1.2,
+        ),
+        textDirection: TextDirection.rtl,
+      ),
+    );
+  }
+}
+
+// ── Mushaf Footer (page number in Arabic style) ─────────────────────────────
+
+class _MushafFooter extends StatelessWidget {
+  const _MushafFooter({required this.page});
 
   final int page;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [Colors.black87, Colors.transparent],
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: _kMushafCream,
+        border: Border(
+          top: BorderSide(color: _kFrameBorder.withAlpha(120), width: 1.5),
         ),
-      ),
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.paddingOf(context).bottom + 8,
-        top: 12,
-        left: 16,
-        right: 16,
       ),
       child: Center(
-        child: Text(
-          'Page $page / ${AppConstants.totalPages}',
-          style: const TextStyle(
-            color: Colors.white70,
-            fontFamily: 'Amiri',
-            fontSize: 13,
-            shadows: [Shadow(blurRadius: 4)],
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: _kFrameBorder.withAlpha(80), width: 1),
+          ),
+          child: Text(
+            // Arabic-style page number with decorative dashes
+            '— $page —',
+            style: const TextStyle(
+              fontFamily: 'Amiri',
+              fontSize: 14,
+              color: _kMushafGold,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 2,
+            ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ── Controls overlay bar (Home, Bookmarks, Menu) ────────────────────────────
+
+class _ControlsBar extends StatelessWidget {
+  const _ControlsBar({
+    required this.onHomeTap,
+    required this.onBookmarkListTap,
+    required this.onMenuTap,
+  });
+
+  final VoidCallback onHomeTap;
+  final VoidCallback onBookmarkListTap;
+  final VoidCallback onMenuTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white.withAlpha(230),
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(25),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: _kFrameBorder.withAlpha(60)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          IconButton(
+            icon: SvgPicture.asset(
+              'assets/icons/ic_home.svg',
+              width: 22,
+              colorFilter: const ColorFilter.mode(
+                _kMushafGreen,
+                BlendMode.srcIn,
+              ),
+            ),
+            tooltip: 'Home',
+            onPressed: onHomeTap,
+          ),
+          IconButton(
+            icon: SvgPicture.asset(
+              'assets/icons/ic_bookmarks_list.svg',
+              width: 22,
+              colorFilter: const ColorFilter.mode(
+                _kMushafGreen,
+                BlendMode.srcIn,
+              ),
+            ),
+            tooltip: 'Bookmarks',
+            onPressed: onBookmarkListTap,
+          ),
+          IconButton(
+            icon: SvgPicture.asset(
+              'assets/icons/ic_quran.svg',
+              width: 22,
+              colorFilter: const ColorFilter.mode(
+                _kMushafGreen,
+                BlendMode.srcIn,
+              ),
+            ),
+            tooltip: 'Surah List',
+            onPressed: onMenuTap,
+          ),
+        ],
       ),
     );
   }
@@ -316,47 +413,116 @@ class _BookmarkSheet extends StatelessWidget {
       builder: (ctx, scrollCtrl) {
         return Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                'Bookmarks',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontFamily: 'Amiri',
-                  fontWeight: FontWeight.bold,
-                ),
+            // Handle
+            Container(
+              margin: const EdgeInsets.only(top: 8),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const Divider(height: 1),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  SvgPicture.asset(
+                    'assets/icons/ic_bookmarks_list.svg',
+                    width: 24,
+                    colorFilter: const ColorFilter.mode(
+                      _kMushafGreen,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Bookmarks',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontFamily: 'Amiri',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Divider(height: 1, color: _kFrameBorder.withAlpha(60)),
             Expanded(
               child: bookmarks.isEmpty
-                  ? const Center(
-                      child: Text(
-                        'No bookmarks yet',
-                        style: TextStyle(fontFamily: 'Amiri', fontSize: 16),
+                  ? Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/icons/ic_bookmark.svg',
+                            width: 48,
+                            colorFilter: ColorFilter.mode(
+                              Colors.grey.shade300,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'No bookmarks yet',
+                            style: TextStyle(
+                              fontFamily: 'Amiri',
+                              fontSize: 16,
+                              color: Colors.grey.shade500,
+                            ),
+                          ),
+                        ],
                       ),
                     )
-                  : ListView.builder(
+                  : ListView.separated(
                       controller: scrollCtrl,
                       itemCount: bookmarks.length,
+                      separatorBuilder: (_, __) => Divider(
+                        height: 1,
+                        indent: 56,
+                        color: Colors.grey.shade200,
+                      ),
                       itemBuilder: (_, i) {
                         final page = bookmarks[i];
                         final label = pageOverlayLabel(page);
                         return ListTile(
-                          leading: SvgPicture.asset(
-                            'assets/icons/ic_bookmark.svg',
-                            width: 24,
-                            colorFilter: const ColorFilter.mode(
-                              Color(0xFF007A33),
-                              BlendMode.srcIn,
+                          leading: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: _kMushafGreen.withAlpha(20),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Center(
+                              child: SvgPicture.asset(
+                                'assets/icons/ic_bookmark.svg',
+                                width: 20,
+                                colorFilter: const ColorFilter.mode(
+                                  _kMushafGreen,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
                             ),
                           ),
                           title: Text(
                             label,
-                            style: const TextStyle(fontFamily: 'Amiri'),
+                            style: const TextStyle(
+                              fontFamily: 'Amiri',
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                          subtitle: Text('Page $page'),
+                          subtitle: Text(
+                            'Page $page',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 12,
+                            ),
+                          ),
                           trailing: IconButton(
-                            icon: const Icon(Icons.delete_outline),
+                            icon: Icon(
+                              Icons.delete_outline,
+                              color: Colors.red.shade300,
+                              size: 20,
+                            ),
                             onPressed: () => onRemove(page),
                           ),
                           onTap: () => onPageSelected(page),
