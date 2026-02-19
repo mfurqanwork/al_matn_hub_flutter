@@ -1,0 +1,24 @@
+<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00662A" />
+      <stop offset="100%" stop-color="#004d1f" />
+    </linearGradient>
+    <pattern id="pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M20 0 L40 20 L20 40 L0 20 Z" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+      <circle cx="20" cy="20" r="10" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+  </defs>
+  
+  <!-- Base gradient -->
+  <rect width="400" height="200" fill="url(#bg)" rx="20"/>
+  
+  <!-- Geometric pattern overlay -->
+  <rect width="400" height="200" fill="url(#pattern)" rx="20"/>
+
+  <!-- Golden decorative arc on the right side -->
+  <path d="M 280,0 Q 230,100 280,200 L 400,200 L 400,0 Z" fill="#D4AF37" opacity="0.15" />
+  <path d="M 320,0 Q 280,100 320,200 L 400,200 L 400,0 Z" fill="#D4AF37" opacity="0.25" />
+  
+  <path d="M 320,-20 Q 260,100 320,220" fill="none" stroke="#c9a96e" stroke-width="1.5" opacity="0.5"/>
+</svg>

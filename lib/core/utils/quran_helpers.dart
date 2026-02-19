@@ -45,3 +45,53 @@ String pageOverlayLabel(int page) {
   final surahName = quran.getSurahName(surahNum);
   return 'Surah $surahName · Juz $juzNum';
 }
+
+String toArabicNumber(int number) {
+  const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+  String text = number.toString();
+  for (int i = 0; i < english.length; i++) {
+    text = text.replaceAll(english[i], arabic[i]);
+  }
+  return text;
+}
+
+const List<String> arabicJuzNames = [
+  "الجزء الأول",
+  "الجزء الثاني",
+  "الجزء الثالث",
+  "الجزء الرابع",
+  "الجزء الخامس",
+  "الجزء السادس",
+  "الجزء السابع",
+  "الجزء الثامن",
+  "الجزء التاسع",
+  "الجزء العاشر",
+  "الجزء الحادي عشر",
+  "الجزء الثاني عشر",
+  "الجزء الثالث عشر",
+  "الجزء الرابع عشر",
+  "الجزء الخامس عشر",
+  "الجزء السادس عشر",
+  "الجزء السابع عشر",
+  "الجزء الثامن عشر",
+  "الجزء التاسع عشر",
+  "الجزء العشرون",
+  "الجزء الحادي والعشرون",
+  "الجزء الثاني والعشرون",
+  "الجزء الثالث والعشرون",
+  "الجزء الرابع والعشرون",
+  "الجزء الخامس والعشرون",
+  "الجزء السادس والعشرون",
+  "الجزء السابع والعشرون",
+  "الجزء الثامن والعشرون",
+  "الجزء التاسع والعشرون",
+  "الجزء الثلاثون",
+];
+
+String getJuzNameArabic(int juzInt) {
+  if (juzInt >= 1 && juzInt <= 30) {
+    return arabicJuzNames[juzInt - 1];
+  }
+  return "الجزء ${toArabicNumber(juzInt)}";
+}

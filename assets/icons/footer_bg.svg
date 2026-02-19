@@ -1,0 +1,70 @@
+<svg viewBox="0 0 1200 64" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <defs>
+        <!-- Gradients -->
+        <linearGradient id="goldOuter" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#DEB86A" />
+            <stop offset="50%" stop-color="#FDF1B8" />
+            <stop offset="100%" stop-color="#C2923A" />
+        </linearGradient>
+        <linearGradient id="goldInner" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#B28230" />
+            <stop offset="50%" stop-color="#E8CE83" />
+            <stop offset="100%" stop-color="#936817" />
+        </linearGradient>
+        
+        <!-- High-Quality Interlocking Geometric & Floral Background Pattern -->
+        <pattern id="islamic-motif" x="0" y="-18" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="scale(0.8)">
+            <!-- Base warm parchment -->
+            <rect width="100" height="100" fill="#F9F6EE" />
+            <!-- Soft backing geometry -->
+            <path d="M50 0 L60 20 L80 10 L70 30 L90 40 L70 50 L90 60 L70 70 L80 90 L60 80 L50 100 L40 80 L20 90 L30 70 L10 60 L30 50 L10 40 L30 30 L20 10 L40 20 Z" fill="#EFE8D6" stroke="#DACCB4" stroke-width="1.5"/>
+            <!-- Prominent Star -->
+            <path d="M50 15 L55 35 L75 25 L65 40 L85 50 L65 60 L75 75 L55 65 L50 85 L45 65 L25 75 L35 60 L15 50 L35 40 L25 25 L45 35 Z" fill="#FDFCF9" stroke="#C5A880" stroke-width="1"/>
+            <!-- Central interlacing squares and gem -->
+            <rect x="40" y="40" width="20" height="20" fill="none" stroke="url(#goldOuter)" stroke-width="1.5" transform="rotate(45 50 50)" />
+            <rect x="40" y="40" width="20" height="20" fill="none" stroke="url(#goldOuter)" stroke-width="1.5" />
+            <!-- Subtle floral curves -->
+            <path d="M50 30 Q55 20 60 20 Q55 30 55 35 Z" fill="#E6D3B6"/>
+            <path d="M70 50 Q80 45 80 40 Q70 45 65 45 Z" fill="#E6D3B6"/>
+            <path d="M50 70 Q45 80 40 80 Q45 70 45 65 Z" fill="#E6D3B6"/>
+            <path d="M30 50 Q20 55 20 60 Q30 55 35 55 Z" fill="#E6D3B6"/>
+            <!-- Floral center -->
+            <circle cx="50" cy="50" r="4" fill="#007A33" />
+            
+            <!-- Connection web lines -->
+            <path d="M100 0 L0 100" fill="none" stroke="#DACCB4" stroke-width="0.5" stroke-dasharray="2,2"/>
+            <path d="M0 0 L100 100" fill="none" stroke="#DACCB4" stroke-width="0.5" stroke-dasharray="2,2"/>
+            <path d="M50 0 L50 100" fill="none" stroke="#DACCB4" stroke-width="0.5"/>
+            <path d="M0 50 L100 50" fill="none" stroke="#DACCB4" stroke-width="0.5"/>
+        </pattern>
+
+        <linearGradient id="cartoucheFill" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="90%" stop-color="#FAF7F2" />
+            <stop offset="100%" stop-color="#EBE3D3" />
+        </linearGradient>
+
+        <filter id="shadow">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#4A2C1A" flood-opacity="0.3"/>
+        </filter>
+    </defs>
+
+    <!-- Base intricate background -->
+    <rect x="0" y="0" width="1200" height="64" fill="url(#islamic-motif)" />
+
+    <!-- Solid borders top and bottom to frame the view neatly -->
+    <rect x="0" y="2" width="1200" height="60" fill="none" stroke="#4A2C1A" stroke-width="2"/>
+    <rect x="0" y="6" width="1200" height="52" fill="none" stroke="url(#goldInner)" stroke-width="3"/>
+    <rect x="0" y="11" width="1200" height="42" fill="none" stroke="#4A2C1A" stroke-width="1.5" stroke-dasharray="5 2"/>
+
+    <!-- CENTER CARTOUCHE (Page Number Area) -->
+    <!-- Beautiful tapered center badge to hold the page number -->
+    <path d="M 450 32 Q 460 10 490 10 L 710 10 Q 740 10 750 32 Q 740 54 710 54 L 490 54 Q 460 54 450 32 Z" fill="url(#cartoucheFill)" stroke="#4A2C1A" stroke-width="2.5" filter="url(#shadow)"/>
+    <path d="M 458 32 Q 466 15 492 15 L 708 15 Q 734 15 742 32 Q 734 49 708 49 L 492 49 Q 466 49 458 32 Z" fill="none" stroke="url(#goldOuter)" stroke-width="3"/>
+    <path d="M 466 32 Q 472 19 494 19 L 706 19 Q 728 19 734 32 Q 728 45 706 45 L 494 45 Q 472 45 466 32 Z" fill="none" stroke="#4A2C1A" stroke-width="1.5"/>
+    
+    <!-- Accent gems -->
+    <circle cx="480" cy="32" r="3" fill="#007A33"/>
+    <circle cx="720" cy="32" r="3" fill="#007A33"/>
+
+</svg>
