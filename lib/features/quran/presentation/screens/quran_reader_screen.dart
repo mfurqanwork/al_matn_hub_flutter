@@ -88,63 +88,40 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
             onBookmarkToggle: () => ref
                 .read(quranReaderNotifierProvider.notifier)
                 .toggleBookmark(page),
+            onHomeTap: () => context.go('/home'),
+            onBookmarkListTap: () => _showBookmarkSheet(context),
           ),
 
           // ── QCF Page Content ──────────────────────────────────────
           Expanded(
-            child: Stack(
-              children: [
-                // Mushaf page with decorative border
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    color: _kMushafCream,
-                    border: Border.symmetric(
-                      vertical: BorderSide(
-                        color: _kFrameBorder.withAlpha(80),
-                        width: 1.5,
-                      ),
-                    ),
-                  ),
-                  child: GestureDetector(
-                    onTap: () => ref
-                        .read(quranReaderNotifierProvider.notifier)
-                        .toggleControls(),
-                    child: PageviewQuran(
-                      controller: _externalController,
-                      initialPageNumber: widget.initialPage,
-                      onPageChanged: (p) {
-                        ref
-                            .read(quranReaderNotifierProvider.notifier)
-                            .updatePage(p);
-                      },
-                      theme: QcfThemeData(
-                        pageBackgroundColor: _kMushafCream,
-                        verseTextColor: _kMushafText,
-                        verseNumberColor: _kMushafBrown,
-                        basmalaColor: _kMushafText,
-                        headerTextColor: _kMushafGold,
-                        headerBackgroundColor: Colors.transparent,
-                        horizontalPadding: 8,
-                        verticalPadding: 4,
-                      ),
-                    ),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              decoration: BoxDecoration(
+                color: _kMushafCream,
+                border: Border.symmetric(
+                  vertical: BorderSide(
+                    color: _kFrameBorder.withAlpha(80),
+                    width: 1.5,
                   ),
                 ),
-
-                // ── Controls Overlay (toggle on tap) ──────────────────
-                AnimatedPositioned(
-                  duration: const Duration(milliseconds: 250),
-                  top: reader.controlsVisible ? 0 : -80,
-                  left: 0,
-                  right: 0,
-                  child: _ControlsBar(
-                    onHomeTap: () => context.go('/home'),
-                    onBookmarkListTap: () => _showBookmarkSheet(context),
-                    onMenuTap: () => context.go('/quran'),
-                  ),
+              ),
+              child: PageviewQuran(
+                controller: _externalController,
+                initialPageNumber: widget.initialPage,
+                onPageChanged: (p) {
+                  ref.read(quranReaderNotifierProvider.notifier).updatePage(p);
+                },
+                theme: QcfThemeData(
+                  pageBackgroundColor: _kMushafCream,
+                  verseTextColor: _kMushafText,
+                  verseNumberColor: _kMushafBrown,
+                  basmalaColor: _kMushafText,
+                  headerTextColor: _kMushafGold,
+                  headerBackgroundColor: Colors.transparent,
+                  horizontalPadding: 8,
+                  verticalPadding: 4,
                 ),
-              ],
+              ),
             ),
           ),
 
@@ -191,6 +168,8 @@ class _MushafHeader extends StatelessWidget {
     required this.page,
     required this.isBookmarked,
     required this.onBookmarkToggle,
+    required this.onHomeTap,
+    required this.onBookmarkListTap,
   });
 
   final String surahNameAr;
@@ -198,6 +177,8 @@ class _MushafHeader extends StatelessWidget {
   final int page;
   final bool isBookmarked;
   final VoidCallback onBookmarkToggle;
+  final VoidCallback onHomeTap;
+  final VoidCallback onBookmarkListTap;
 
   @override
   Widget build(BuildContext context) {
@@ -214,6 +195,41 @@ class _MushafHeader extends StatelessWidget {
           // Juz number (left side, matching traditional Mushaf layout)
           _OrnamentedLabel(text: 'الجزء $juzNum'),
           const Spacer(),
+          // Home
+          IconButton(
+            icon: SvgPicture.asset(
+              'assets/icons/ic_home.svg',
+              width: 22,
+              colorFilter: const ColorFilter.mode(
+                _kMushafGold,
+                BlendMode.srcIn,
+              ),
+            ),
+            tooltip: 'Home',
+            onPressed: onHomeTap,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            splashRadius: 20,
+          ),
+          const SizedBox(width: 16),
+          // Bookmarks List
+          IconButton(
+            icon: SvgPicture.asset(
+              'assets/icons/ic_bookmarks_list.svg',
+              width: 22,
+              colorFilter: const ColorFilter.mode(
+                _kMushafGold,
+                BlendMode.srcIn,
+              ),
+            ),
+            tooltip: 'Bookmarks List',
+            onPressed: onBookmarkListTap,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            splashRadius: 20,
+          ),
+          const SizedBox(width: 16),
+
           // Bookmark icon
           GestureDetector(
             onTap: onBookmarkToggle,
@@ -308,81 +324,6 @@ class _MushafFooter extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-// ── Controls overlay bar (Home, Bookmarks, Menu) ────────────────────────────
-
-class _ControlsBar extends StatelessWidget {
-  const _ControlsBar({
-    required this.onHomeTap,
-    required this.onBookmarkListTap,
-    required this.onMenuTap,
-  });
-
-  final VoidCallback onHomeTap;
-  final VoidCallback onBookmarkListTap;
-  final VoidCallback onMenuTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white.withAlpha(230),
-        borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withAlpha(25),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(color: _kFrameBorder.withAlpha(60)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          IconButton(
-            icon: SvgPicture.asset(
-              'assets/icons/ic_home.svg',
-              width: 22,
-              colorFilter: const ColorFilter.mode(
-                _kMushafGreen,
-                BlendMode.srcIn,
-              ),
-            ),
-            tooltip: 'Home',
-            onPressed: onHomeTap,
-          ),
-          IconButton(
-            icon: SvgPicture.asset(
-              'assets/icons/ic_bookmarks_list.svg',
-              width: 22,
-              colorFilter: const ColorFilter.mode(
-                _kMushafGreen,
-                BlendMode.srcIn,
-              ),
-            ),
-            tooltip: 'Bookmarks',
-            onPressed: onBookmarkListTap,
-          ),
-          IconButton(
-            icon: SvgPicture.asset(
-              'assets/icons/ic_quran.svg',
-              width: 22,
-              colorFilter: const ColorFilter.mode(
-                _kMushafGreen,
-                BlendMode.srcIn,
-              ),
-            ),
-            tooltip: 'Surah List',
-            onPressed: onMenuTap,
-          ),
-        ],
       ),
     );
   }
