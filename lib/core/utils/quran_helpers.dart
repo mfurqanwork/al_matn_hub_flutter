@@ -14,17 +14,6 @@ int pageToViewIndex(int realPage) =>
 
 int viewIndexToPage(int viewIndex) => AppConstants.totalPages - viewIndex;
 
-/// Zero-padded asset path for [page] (1–604).
-/// Returns e.g. `lib/assets/quran/page_001.webp`
-String pageAssetPath(int page) {
-  assert(
-    page >= 1 && page <= AppConstants.totalPages,
-    'pageAssetPath: page must be between 1 and 604, got $page',
-  );
-  final padded = page.toString().padLeft(3, '0');
-  return '${AppConstants.quranAssetDir}/page_$padded.webp';
-}
-
 /// Returns the first Mushaf page number for [juz] (1–30).
 int juzStartPage(int juz) {
   final data = quran.getSurahAndVersesFromJuz(juz);

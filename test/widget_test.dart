@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:al_matn_hub_flutter/core/constants/app_constants.dart';
 import 'package:al_matn_hub_flutter/core/utils/quran_helpers.dart';
 import 'package:al_matn_hub_flutter/features/quran/presentation/providers/quran_reader_notifier.dart';
 
 void main() {
-  //  Unit: page  viewIndex mapping 
+  //  Unit: page  viewIndex mapping
   group('quran_helpers  page mapping', () {
     test('pageToViewIndex maps page 1  index 603', () {
       expect(pageToViewIndex(1), 603);
@@ -22,20 +21,9 @@ void main() {
         expect(viewIndexToPage(pageToViewIndex(page)), page);
       }
     });
-
-    test('pageAssetPath pads page number to 3 digits', () {
-      expect(
-        pageAssetPath(1),
-        '${AppConstants.quranAssetDir}/page_001.webp',
-      );
-      expect(
-        pageAssetPath(604),
-        '${AppConstants.quranAssetDir}/page_604.webp',
-      );
-    });
   });
 
-  //  Unit: ReaderState model 
+  //  Unit: ReaderState model
   group('ReaderState', () {
     const initial = ReaderState(
       currentPage: 1,
@@ -60,7 +48,7 @@ void main() {
     });
   });
 
-  //  Widget: QuranMenuScreen tab smoke test 
+  //  Widget: QuranMenuScreen tab smoke test
   // Note: Full widget tests require the quran package's asset data.
   // The lightweight smoke test below only validates widget tree structure
   // without dependency on image assets.
@@ -70,9 +58,7 @@ void main() {
       await tester.pumpWidget(
         const ProviderScope(
           child: MaterialApp(
-            home: Scaffold(
-              body: Center(child: Text('Placeholder')),
-            ),
+            home: Scaffold(body: Center(child: Text('Placeholder'))),
           ),
         ),
       );

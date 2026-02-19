@@ -1,6 +1,6 @@
 /// App-wide compile-time constants.
 abstract final class AppConstants {
-  /// Total readable Mushaf pages (1–604). page_000.webp is excluded.
+  /// Total readable Mushaf pages (1–604).
   static const int totalPages = 604;
 
   /// Total Juz count in the Quran.
@@ -12,7 +12,4 @@ abstract final class AppConstants {
   // ── SharedPreferences keys ──────────────────────────────────────────────
   static const String prefLastReadPage = 'last_read_page';
   static const String prefBookmarks = 'bookmarks';
-
-  // ── Asset path ──────────────────────────────────────────────────────────
-  static const String quranAssetDir = 'assets/quran';
 }
