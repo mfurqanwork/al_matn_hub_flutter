@@ -247,7 +247,7 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
                                         width: 32,
                                         height: 32,
                                         decoration: BoxDecoration(
-                                          color: _kMushafGreen.withOpacity(0.1),
+                                          color: _kMushafGold.withOpacity(0.1),
                                           shape: BoxShape.circle,
                                         ),
                                         child: Center(
@@ -255,7 +255,7 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
                                             'assets/icons/ic_bookmark.svg',
                                             width: 14,
                                             colorFilter: const ColorFilter.mode(
-                                              _kMushafGreen,
+                                              _kMushafGold,
                                               BlendMode.srcIn,
                                             ),
                                           ),
@@ -408,56 +408,59 @@ class _MushafHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 48,
+      height: 40,
       width: double.infinity,
       child: Stack(
         children: [
           Positioned.fill(
-            child: SvgPicture.asset(
-              'assets/icons/header_bg.svg',
+            child: Image.asset(
+              'assets/icons/quran_header_page.webp',
               fit: BoxFit.fill,
             ),
           ),
-          Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: Center(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 400),
-                    child: Text(
-                      'سُورَةُ $surahNameAr',
-                      key: ValueKey(surahNameAr),
-                      style: const TextStyle(
-                        fontFamily: 'Amiri',
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: _kMushafText,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Center(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 400),
+                      child: Text(
+                        'سُورَةُ $surahNameAr',
+                        key: ValueKey(surahNameAr),
+                        style: const TextStyle(
+                          fontFamily: 'Amiri',
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: _kMushafText,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              const Expanded(flex: 1, child: SizedBox()),
-              Expanded(
-                flex: 1,
-                child: Center(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 400),
-                    child: Text(
-                      juzNameAr,
-                      key: ValueKey(juzNameAr),
-                      style: const TextStyle(
-                        fontFamily: 'Amiri',
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: _kMushafText,
+                const Expanded(flex: 1, child: SizedBox()),
+                Expanded(
+                  flex: 1,
+                  child: Center(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 400),
+                      child: Text(
+                        juzNameAr,
+                        key: ValueKey(juzNameAr),
+                        style: const TextStyle(
+                          fontFamily: 'Amiri',
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: _kMushafText,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -473,27 +476,30 @@ class _MushafFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 38,
+      height: 40,
       width: double.infinity,
       child: Stack(
         children: [
           Positioned.fill(
-            child: SvgPicture.asset(
-              'assets/icons/footer_bg.svg',
+            child: Image.asset(
+              'assets/icons/quran_footer_page.webp',
               fit: BoxFit.fill,
             ),
           ),
-          Center(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: Text(
-                toArabicNumber(page),
-                key: ValueKey(page),
-                style: const TextStyle(
-                  fontFamily: 'Amiri',
-                  fontSize: 12,
-                  color: _kMushafText,
-                  fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Center(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: Text(
+                  toArabicNumber(page),
+                  key: ValueKey(page),
+                  style: const TextStyle(
+                    fontFamily: 'Amiri',
+                    fontSize: 16,
+                    color: _kMushafText,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
