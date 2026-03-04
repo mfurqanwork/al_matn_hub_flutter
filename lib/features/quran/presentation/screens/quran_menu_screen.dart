@@ -206,19 +206,6 @@ class _JuzGrid extends ConsumerWidget {
               borderRadius: BorderRadius.circular(16),
               child: Stack(
                 children: [
-                  // Subtle transparent Quran watermark
-                  Positioned(
-                    right: -15,
-                    bottom: -15,
-                    child: SvgPicture.asset(
-                      'assets/icons/ic_quran.svg',
-                      width: 70,
-                      colorFilter: ColorFilter.mode(
-                        const Color(0xFFC9A96E).withOpacity(0.12),
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
                   // Green accent bar on the left edge
                   Positioned(
                     left: 0,
