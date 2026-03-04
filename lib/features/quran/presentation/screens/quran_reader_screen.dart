@@ -120,7 +120,7 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
                     verseNumberColor: _kMushafBrown,
                     basmalaColor: _kMushafText,
                     headerTextColor: _kMushafText,
-                    headerBackgroundColor: Colors.transparent,
+                    headerBackgroundColor: Colors.white,
                     horizontalPadding: 12,
                     verticalPadding: 0,
                     verseHeight: dynamicVerseHeight,

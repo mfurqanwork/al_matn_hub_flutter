@@ -134,18 +134,20 @@ class QuranMenuScreen extends ConsumerWidget {
               labelColor: theme.colorScheme.primary,
               unselectedLabelColor: Colors.grey,
               indicatorColor: theme.colorScheme.primary,
+
               tabs: const [
-                Tab(text: 'Juz'),
                 Tab(text: 'Surahs'),
+                Tab(text: 'Juz'),
               ],
             ),
             Expanded(
               child: TabBarView(
+                clipBehavior: Clip.hardEdge,
                 children: [
-                  _JuzGrid(onJuzSelected: (page) => _openReader(context, page)),
                   _SurahTabBody(
                     onSurahSelected: (page) => _openReader(context, page),
                   ),
+                  _JuzGrid(onJuzSelected: (page) => _openReader(context, page)),
                 ],
               ),
             ),
@@ -172,67 +174,104 @@ class _JuzGrid extends ConsumerWidget {
     final juzList = ref.watch(juzListProvider);
     final theme = Theme.of(context);
 
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 5,
-        childAspectRatio: 0.9,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-      ),
-      itemCount: juzList.length,
-      itemBuilder: (context, index) {
-        final juz = juzList[index];
-        return InkWell(
-          onTap: () => onJuzSelected(juz.startPage),
-          borderRadius: BorderRadius.circular(16),
-          child: Ink(
+    return Container(
+      color: theme.scaffoldBackgroundColor,
+      child: GridView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          childAspectRatio: 1.3,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+        ),
+        itemCount: juzList.length,
+        itemBuilder: (context, index) {
+          final juz = juzList[index];
+          return Container(
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: const Color(0xFFC9A96E).withOpacity(0.3),
+                color: const Color(0xFF007A33).withOpacity(0.15),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFB8860B).withOpacity(0.05),
+                  color: const Color(0xFF007A33).withOpacity(0.04),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
               ],
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFB8860B).withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    '${juz.number}',
-                    style: const TextStyle(
-                      color: Color(0xFF6B3A2A),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Stack(
+                children: [
+                  // Subtle transparent Quran watermark
+                  Positioned(
+                    right: -15,
+                    bottom: -15,
+                    child: SvgPicture.asset(
+                      'assets/icons/ic_quran.svg',
+                      width: 70,
+                      colorFilter: ColorFilter.mode(
+                        const Color(0xFFC9A96E).withOpacity(0.12),
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Juz',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
+                  // Green accent bar on the left edge
+                  Positioned(
+                    left: 0,
+                    top: 16,
+                    bottom: 16,
+                    child: Container(
+                      width: 4,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF007A33),
+                        borderRadius: BorderRadius.horizontal(
+                          right: Radius.circular(4),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                  // Centered minimal text
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Juz ${juz.number}',
+                          style: const TextStyle(
+                            color: Color(0xFF1A1A1A),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Page ${juz.startPage}',
+                          style: const TextStyle(
+                            color: Color(0xFF007A33),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Ripple effect interaction layer
+                  Positioned.fill(
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(onTap: () => onJuzSelected(juz.startPage)),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
