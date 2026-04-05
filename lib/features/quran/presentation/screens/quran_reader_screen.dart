@@ -44,15 +44,22 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
   Widget build(BuildContext context) {
     final readerAsync = ref.watch(quranReaderNotifierProvider);
 
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: Colors.white,
-      body: readerAsync.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: _kMushafGreen),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        context.go('/quran');
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: Colors.white,
+        body: readerAsync.when(
+          loading: () => const Center(
+            child: CircularProgressIndicator(color: _kMushafGreen),
+          ),
+          error: (e, _) => Center(child: Text('Error: $e')),
+          data: (reader) => _buildReader(context, reader),
         ),
-        error: (e, _) => Center(child: Text('Error: $e')),
-        data: (reader) => _buildReader(context, reader),
       ),
     );
   }

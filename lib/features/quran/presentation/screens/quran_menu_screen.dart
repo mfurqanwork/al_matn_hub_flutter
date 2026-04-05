@@ -215,15 +215,6 @@ class _JuzGrid extends ConsumerWidget {
                             fontSize: 16,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Page ${juz.startPage}',
-                          style: const TextStyle(
-                            color: Color(0xFF007A33),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
                       ],
                     ),
                   ),
