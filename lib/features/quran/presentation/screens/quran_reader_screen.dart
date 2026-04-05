@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qcf_quran/qcf_quran.dart';
 import 'package:quran/quran.dart' as quran;
@@ -208,12 +207,12 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      SvgPicture.asset(
-                                        'assets/icons/ic_bookmark.svg',
-                                        width: 48,
-                                        colorFilter: ColorFilter.mode(
-                                          Colors.grey.shade200,
-                                          BlendMode.srcIn,
+                                      Opacity(
+                                        opacity: 0.3,
+                                        child: Image.asset(
+                                          'assets/icons/ic_bookmark.png',
+                                          width: 48,
+                                          height: 48,
                                         ),
                                       ),
                                       const SizedBox(height: 8),
@@ -251,13 +250,10 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
                                           shape: BoxShape.circle,
                                         ),
                                         child: Center(
-                                          child: SvgPicture.asset(
-                                            'assets/icons/ic_bookmark.svg',
+                                          child: Image.asset(
+                                            'assets/icons/ic_bookmark.png',
                                             width: 14,
-                                            colorFilter: const ColorFilter.mode(
-                                              _kMushafGold,
-                                              BlendMode.srcIn,
-                                            ),
+                                            height: 14,
                                           ),
                                         ),
                                       ),
@@ -312,7 +308,7 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         _buildActionItem(
-                          icon: 'assets/icons/ic_home.svg',
+                          icon: 'assets/icons/ic_home.png',
                           label: 'Home',
                           onTap: () {
                             Navigator.pop(ctx);
@@ -320,7 +316,7 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
                           },
                         ),
                         _buildActionItem(
-                          icon: 'assets/icons/ic_bookmark.svg',
+                          icon: 'assets/icons/ic_bookmark.png',
                           label: isBookmarked ? 'Remove' : 'Bookmark',
                           color: isBookmarked ? _kMushafGreen : _kMushafGold,
                           onTap: () {
@@ -361,14 +357,7 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
                 color: (color ?? _kMushafGold).withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: SvgPicture.asset(
-                icon,
-                width: 24,
-                colorFilter: ColorFilter.mode(
-                  color ?? _kMushafGold,
-                  BlendMode.srcIn,
-                ),
-              ),
+              child: Image.asset(icon, width: 36, height: 36),
             ),
             const SizedBox(height: 8),
             Text(

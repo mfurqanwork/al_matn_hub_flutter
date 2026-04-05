@@ -36,7 +36,7 @@ class QuranMenuScreen extends ConsumerWidget {
               ),
             ],
           ),
-          centerTitle: true,
+          centerTitle: false,
         ),
         body: Column(
           children: [
@@ -80,14 +80,10 @@ class QuranMenuScreen extends ConsumerWidget {
                                   color: Colors.white.withOpacity(0.2),
                                   shape: BoxShape.circle,
                                 ),
-                                child: SvgPicture.asset(
-                                  'assets/icons/ic_quran.svg',
+                                child: Image.asset(
+                                  'assets/icons/ic_quran.png',
                                   width: 24,
                                   height: 24,
-                                  colorFilter: const ColorFilter.mode(
-                                    Colors.white,
-                                    BlendMode.srcIn,
-                                  ),
                                 ),
                               ),
                               const SizedBox(width: 16),
@@ -270,12 +266,10 @@ class _SurahTabBody extends ConsumerWidget {
               hintStyle: TextStyle(color: Colors.grey.shade400),
               prefixIcon: Padding(
                 padding: const EdgeInsets.all(14.0),
-                child: SvgPicture.asset(
-                  'assets/icons/ic_search.svg',
-                  colorFilter: const ColorFilter.mode(
-                    Color(0xFFB8860B),
-                    BlendMode.srcIn,
-                  ),
+                child: Image.asset(
+                  'assets/icons/ic_search.png',
+                  width: 24,
+                  height: 24,
                 ),
               ),
               border: OutlineInputBorder(

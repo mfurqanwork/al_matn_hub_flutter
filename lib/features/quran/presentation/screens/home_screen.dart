@@ -83,13 +83,10 @@ class HomeScreen extends ConsumerWidget {
                           const SizedBox(height: 6),
                           Row(
                             children: [
-                              SvgPicture.asset(
-                                'assets/icons/ic_quran.svg',
-                                width: 18,
-                                colorFilter: const ColorFilter.mode(
-                                  Colors.white70,
-                                  BlendMode.srcIn,
-                                ),
+                              Image.asset(
+                                'assets/icons/ic_quran.png',
+                                width: 22,
+                                height: 22,
                               ),
                               const SizedBox(width: 8),
                               Text(
@@ -150,14 +147,14 @@ class HomeScreen extends ConsumerWidget {
                 _ActionCard(
                   title: 'Last Read',
                   subtitle: 'Resume page $lastReadPage',
-                  icon: 'assets/icons/ic_bookmark.svg',
+                  icon: 'assets/icons/ic_bookmark.png',
                   color: const Color(0xFF007A33),
                   onTap: () => context.go('/quran/reader?page=$lastReadPage'),
                 ),
                 _ActionCard(
                   title: 'Search Surah',
                   subtitle: 'Browse indices',
-                  icon: 'assets/icons/ic_search.svg',
+                  icon: 'assets/icons/ic_search.png',
                   color: const Color(0xFFB8860B),
                   onTap: () => context.go('/quran'),
                 ),
@@ -210,16 +207,15 @@ class _ActionCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withOpacity(0.05),
                   shape: BoxShape.circle,
                 ),
-                child: SvgPicture.asset(
+                child: Image.asset(
                   icon,
-                  width: 24,
-                  height: 24,
-                  colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                  width: 32,
+                  height: 32,
                 ),
               ),
               const Spacer(),

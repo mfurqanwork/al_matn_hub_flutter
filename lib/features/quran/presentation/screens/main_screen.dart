@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 class MainScreen extends StatefulWidget {
@@ -54,49 +53,45 @@ class _MainScreenState extends State<MainScreen> {
         unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icons/ic_home.svg',
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                _calculateSelectedIndex(context) == 0 ? const Color(0xFF007A33) : Colors.grey,
-                BlendMode.srcIn,
+            icon: Opacity(
+              opacity: _calculateSelectedIndex(context) == 0 ? 1.0 : 0.4,
+              child: Image.asset(
+                'assets/icons/ic_home.png',
+                width: 28,
+                height: 28,
               ),
             ),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icons/ic_quran.svg',
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                _calculateSelectedIndex(context) == 1 ? const Color(0xFF007A33) : Colors.grey,
-                BlendMode.srcIn,
+            icon: Opacity(
+              opacity: _calculateSelectedIndex(context) == 1 ? 1.0 : 0.4,
+              child: Image.asset(
+                'assets/icons/ic_quran.png',
+                width: 28,
+                height: 28,
               ),
             ),
             label: 'Quran',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icons/ic_bookmark.svg',
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                _calculateSelectedIndex(context) == 2 ? const Color(0xFF007A33) : Colors.grey,
-                BlendMode.srcIn,
+            icon: Opacity(
+              opacity: _calculateSelectedIndex(context) == 2 ? 1.0 : 0.4,
+              child: Image.asset(
+                'assets/icons/ic_bookmark.png',
+                width: 28,
+                height: 28,
               ),
             ),
             label: 'Bookmarks',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              'assets/icons/ic_settings.svg',
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                _calculateSelectedIndex(context) == 3 ? const Color(0xFF007A33) : Colors.grey,
-                BlendMode.srcIn,
+            icon: Opacity(
+              opacity: _calculateSelectedIndex(context) == 3 ? 1.0 : 0.4,
+              child: Image.asset(
+                'assets/icons/ic_settings.png',
+                width: 28,
+                height: 28,
               ),
             ),
             label: 'Settings',

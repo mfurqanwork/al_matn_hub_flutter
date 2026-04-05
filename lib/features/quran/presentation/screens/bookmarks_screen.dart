@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/quran_reader_notifier.dart';
 import '../../../../core/utils/quran_helpers.dart';
@@ -18,25 +17,18 @@ class BookmarksScreen extends ConsumerWidget {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SvgPicture.asset(
-              'assets/icons/ic_bookmark.svg',
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                theme.colorScheme.primary,
-                BlendMode.srcIn,
-              ),
-            ),
+            Image.asset('assets/icons/logo.png', width: 28, height: 28),
             const SizedBox(width: 8),
-            const Text(
+            Text(
               'Bookmarks',
-              style: TextStyle(
+              style: theme.textTheme.titleLarge?.copyWith(
                 fontFamily: 'Amiri',
                 fontWeight: FontWeight.bold,
               ),
             ),
           ],
         ),
+        centerTitle: false,
       ),
       body: readerAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -48,13 +40,12 @@ class BookmarksScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SvgPicture.asset(
-                    'assets/icons/ic_bookmark.svg',
-                    width: 64,
-                    height: 64,
-                    colorFilter: ColorFilter.mode(
-                      Colors.grey.withOpacity(0.3),
-                      BlendMode.srcIn,
+                  Opacity(
+                    opacity: 0.2,
+                    child: Image.asset(
+                      'assets/icons/ic_bookmark.png',
+                      width: 64,
+                      height: 64,
                     ),
                   ),
                   const SizedBox(height: 16),
