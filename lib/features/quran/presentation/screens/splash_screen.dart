@@ -1,10 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart';
-
-import '../../../../core/constants/app_constants.dart';
+import 'package:qcf_quran_plus/qcf_quran_plus.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,6 +12,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  double _loadingProgress = 0.0;
   @override
   void initState() {
     super.initState();
@@ -21,21 +20,25 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _initializeApp() async {
-    // Artificial delay for splash screen visibility
-    await Future.delayed(const Duration(seconds: 2));
-
-    int page = 1;
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      page = prefs.getInt(AppConstants.prefLastReadPage) ?? 1;
-    } on MissingPluginException {
-      page = 1;
-    }
+    // Initialize fonts - we now wait for 100% completion to ensure
+    // maximum performance (60fps) and zero stuttering in the Mushaf.
+    // Note: Debugging over wireless ADB can make this initial extraction slower.
+    await QcfFontLoader.setupFontsAtStartup(
+      onProgress: (double progress) {
+        if (mounted) {
+          setState(() {
+            _loadingProgress = progress;
+          });
+        }
+      },
+    );
+    
+    // Brief extra delay for branding and smooth transition
+    await Future.delayed(const Duration(milliseconds: 500));
 
     if (mounted) {
-      // For now, let's go to Quran reader as requested by previous logic,
-      // but we could also go to a new Home screen.
-      context.go('/quran/reader?page=$page');
+      // Go to the Home Dashboard first! This gives fonts time to load in the background
+      context.go('/home');
     }
   }
 
@@ -64,9 +67,18 @@ class _SplashScreenState extends State<SplashScreen> {
                     height: 150,
                   ),
                 ),
-                const SizedBox(height: 24),
-                const CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF007A33)),
+                const SizedBox(height: 32),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 60.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: LinearProgressIndicator(
+                      value: _loadingProgress,
+                      minHeight: 6,
+                      backgroundColor: const Color(0xFF007A33).withOpacity(0.1),
+                      valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF007A33)),
+                    ),
+                  ),
                 ),
               ],
             ),

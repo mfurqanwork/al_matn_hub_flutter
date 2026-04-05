@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:qcf_quran/qcf_quran.dart';
+import 'package:qcf_quran_plus/qcf_quran_plus.dart';
 import 'package:quran/quran.dart' as quran;
 
 import '../../../../core/utils/quran_helpers.dart';
@@ -84,11 +84,6 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
     final juzNum = quran.getJuzNumber(firstSurah, firstVerse);
     final juzNameAr = getJuzNameArabic(juzNum);
 
-    // Dynamically adjust heights based on screen size to prevent overlap
-    final screenHeight = MediaQuery.of(context).size.height;
-    final dynamicVerseHeight = (screenHeight / 850 * 1.9).clamp(1.5, 1.9);
-    final dynamicVerseNumberHeight = (dynamicVerseHeight * 0.6).clamp(1.1, 1.3);
-
     return SafeArea(
       child: Column(
         children: [
@@ -112,28 +107,19 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onTap: () => _showActionSheet(context),
-                child: PageviewQuran(
-                  controller: _externalController,
-                  initialPageNumber: widget.initialPage,
+                child: QuranPageView(
+                  pageController: _externalController,
+                  highlights: const [], // Add highlights later if needed
+                  isDarkMode: Theme.of(context).brightness == Brightness.dark,
+                  isTajweed: false,
                   onPageChanged: (p) {
                     ref
                         .read(quranReaderNotifierProvider.notifier)
                         .updatePage(p);
                   },
-                  theme: QcfThemeData(
-                    pageBackgroundColor: Colors.white,
-                    verseTextColor: _kMushafText,
-                    verseNumberColor: _kMushafBrown,
-                    basmalaColor: _kMushafText,
-                    headerTextColor: _kMushafText,
-                    headerBackgroundColor: Colors.white,
-                    horizontalPadding: 12,
-                    verticalPadding: 0,
-                    verseHeight: dynamicVerseHeight,
-                    verseNumberHeight: dynamicVerseNumberHeight,
-                    letterSpacing: 0.0,
-                    wordSpacing: 0.0,
-                  ),
+                  onLongPress: (surahNumber, verseNumber, details) {
+                    // Optional features
+                  },
                 ),
               ),
             ),
@@ -400,63 +386,46 @@ class _MushafHeader extends StatelessWidget {
   final VoidCallback onBookmarkToggle;
   final VoidCallback onHomeTap;
   final VoidCallback onBookmarkListTap;
-
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40,
+    return Container(
       width: double.infinity,
-      child: Stack(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/icons/quran_header_page.webp',
-              fit: BoxFit.fill,
-            ),
-          ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  flex: 1,
-                  child: Center(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 400),
-                      child: Text(
-                        'سُورَةُ $surahNameAr',
-                        key: ValueKey(surahNameAr),
-                        style: const TextStyle(
-                          fontFamily: 'Amiri',
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: _kMushafText,
-                        ),
-                      ),
-                    ),
+                Text(
+                  juzNameAr,
+                  style: const TextStyle(
+                    fontFamily: 'Amiri',
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: _kMushafText,
                   ),
                 ),
-                const Expanded(flex: 1, child: SizedBox()),
-                Expanded(
-                  flex: 1,
-                  child: Center(
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 400),
-                      child: Text(
-                        juzNameAr,
-                        key: ValueKey(juzNameAr),
-                        style: const TextStyle(
-                          fontFamily: 'Amiri',
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: _kMushafText,
-                        ),
-                      ),
-                    ),
+                Text(
+                  'سُورَةُ $surahNameAr',
+                  style: const TextStyle(
+                    fontFamily: 'Amiri',
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: _kMushafText,
                   ),
                 ),
               ],
             ),
+          ),
+          const SizedBox(height: 4),
+          Image.asset(
+            'assets/icons/quran_page_header.png',
+            width: double.infinity,
+            fit: BoxFit.fitWidth,
           ),
         ],
       ),
@@ -471,33 +440,26 @@ class _MushafFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40,
+    return Container(
       width: double.infinity,
-      child: Stack(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/icons/quran_footer_page.webp',
-              fit: BoxFit.fill,
-            ),
+          Image.asset(
+            'assets/icons/quran_page_footer.png',
+            width: double.infinity,
+            fit: BoxFit.fitWidth,
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 4.0),
-            child: Center(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: Text(
-                  toArabicNumber(page),
-                  key: ValueKey(page),
-                  style: const TextStyle(
-                    fontFamily: 'Amiri',
-                    fontSize: 16,
-                    color: _kMushafText,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+          const SizedBox(height: 4),
+          Text(
+            toArabicNumber(page),
+            style: const TextStyle(
+              fontFamily: 'Amiri',
+              fontSize: 20,
+              color: _kMushafText,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
