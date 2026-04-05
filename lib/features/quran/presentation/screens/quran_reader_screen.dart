@@ -80,7 +80,7 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
 
     // Dynamically adjust heights based on screen size to prevent overlap
     final screenHeight = MediaQuery.of(context).size.height;
-    final dynamicVerseHeight = (screenHeight / 850 * 2.1).clamp(1.5, 2.1);
+    final dynamicVerseHeight = (screenHeight / 850 * 1.9).clamp(1.5, 1.9);
     final dynamicVerseNumberHeight = (dynamicVerseHeight * 0.6).clamp(1.1, 1.3);
 
     return SafeArea(
