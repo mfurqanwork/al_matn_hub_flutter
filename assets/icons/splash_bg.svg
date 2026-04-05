@@ -8,12 +8,8 @@
 <rect width="1080" height="1920" fill="url(#islamic_pattern)" opacity="0.5"/>
 
 <!-- Logo Placement Placeholder (Center) -->
-<!-- Intent is for developer to place logo.svg on top -->
-<circle cx="540" cy="800" r="150" fill="#007A33"/>
-<path d="M540 680 L590 800 H710 L610 880 L650 1000 L540 920 L430 1000 L470 880 L370 800 H490 L540 680Z" fill="#D4AF37"/>
-<!-- Book Stylized -->
-<path d="M540 920 V820 C540 820 574 820 604 840 V940 C574 920 540 920 540 920 Z" fill="#FFFFFF"/>
-<path d="M540 920 V820 C540 820 506 820 476 840 V940 C506 920 540 920 540 920 Z" fill="#E6E6E6"/>
+<!-- Intent is for developer to place logo.png on top -->
+<image href="logo.png" x="540" y="800" width="150" height="150"/>
 
 <!-- Text Placeholder -->
 <path d="M390 1100 H690 V1150 H390 Z" fill="#007A33" opacity="0.1"/> 

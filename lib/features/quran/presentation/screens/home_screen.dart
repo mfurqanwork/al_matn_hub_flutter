@@ -25,7 +25,7 @@ class HomeScreen extends ConsumerWidget {
         centerTitle: false,
         title: Row(
           children: [
-            SvgPicture.asset('assets/icons/logo.svg', width: 32, height: 32),
+            Image.asset('assets/icons/logo.png', width: 32, height: 32),
             const SizedBox(width: 8),
             Text(
               'Al-Matn Hub',
@@ -72,25 +72,6 @@ class HomeScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.wb_sunny_rounded,
-                                color: Colors.amber.shade300,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'Assalamu Alaikum',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Spacer(),
                           const Text(
                             'Continue Reading...',
                             style: TextStyle(

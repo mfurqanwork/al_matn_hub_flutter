@@ -25,7 +25,7 @@ class QuranMenuScreen extends ConsumerWidget {
           title: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset('assets/icons/logo.svg', width: 28, height: 28),
+              Image.asset('assets/icons/logo.png', width: 28, height: 28),
               const SizedBox(width: 8),
               Text(
                 'Quran',
@@ -206,21 +206,6 @@ class _JuzGrid extends ConsumerWidget {
               borderRadius: BorderRadius.circular(16),
               child: Stack(
                 children: [
-                  // Green accent bar on the left edge
-                  Positioned(
-                    left: 0,
-                    top: 16,
-                    bottom: 16,
-                    child: Container(
-                      width: 4,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF007A33),
-                        borderRadius: BorderRadius.horizontal(
-                          right: Radius.circular(4),
-                        ),
-                      ),
-                    ),
-                  ),
                   // Centered minimal text
                   Center(
                     child: Column(
