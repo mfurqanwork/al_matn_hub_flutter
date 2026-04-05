@@ -145,18 +145,18 @@ class HomeScreen extends ConsumerWidget {
               childAspectRatio: 1.1,
               children: [
                 _ActionCard(
-                  title: 'Last Read',
-                  subtitle: 'Resume page $lastReadPage',
-                  icon: 'assets/icons/ic_bookmark.png',
-                  color: const Color(0xFF007A33),
-                  onTap: () => context.go('/quran/reader?page=$lastReadPage'),
-                ),
-                _ActionCard(
-                  title: 'Search Surah',
-                  subtitle: 'Browse indices',
-                  icon: 'assets/icons/ic_search.png',
+                  title: 'Quran',
+                  subtitle: 'Read Quran',
+                  icon: 'assets/icons/ic_quran.png',
                   color: const Color(0xFFB8860B),
                   onTap: () => context.go('/quran'),
+                ),
+                _ActionCard(
+                  title: 'Hadith Books',
+                  subtitle: 'Read 6 major books',
+                  icon: 'assets/icons/ic_quran.png',
+                  color: const Color(0xFF8B4513),
+                  onTap: () => context.go('/hadith'),
                 ),
               ],
             ),
@@ -212,11 +212,7 @@ class _ActionCard extends StatelessWidget {
                   color: color.withOpacity(0.05),
                   shape: BoxShape.circle,
                 ),
-                child: Image.asset(
-                  icon,
-                  width: 32,
-                  height: 32,
-                ),
+                child: Image.asset(icon, width: 32, height: 32),
               ),
               const Spacer(),
               Text(

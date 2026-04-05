@@ -15,10 +15,10 @@ class _MainScreenState extends State<MainScreen> {
     if (location.startsWith('/quran')) {
       return 1;
     }
-    if (location.startsWith('/bookmarks')) {
+    if (location.startsWith('/hadith')) {
       return 2;
     }
-    if (location.startsWith('/settings')) {
+    if (location.startsWith('/bookmarks')) {
       return 3;
     }
     return 0;
@@ -33,10 +33,10 @@ class _MainScreenState extends State<MainScreen> {
         context.go('/quran');
         break;
       case 2:
-        context.go('/bookmarks');
+        context.go('/hadith');
         break;
       case 3:
-        context.go('/settings');
+        context.go('/bookmarks');
         break;
     }
   }
@@ -78,23 +78,23 @@ class _MainScreenState extends State<MainScreen> {
             icon: Opacity(
               opacity: _calculateSelectedIndex(context) == 2 ? 1.0 : 0.4,
               child: Image.asset(
+                'assets/icons/ic_quran.png', // Same icon as quran
+                width: 28,
+                height: 28,
+              ),
+            ),
+            label: 'Hadith',
+          ),
+          BottomNavigationBarItem(
+            icon: Opacity(
+              opacity: _calculateSelectedIndex(context) == 3 ? 1.0 : 0.4,
+              child: Image.asset(
                 'assets/icons/ic_bookmark.png',
                 width: 28,
                 height: 28,
               ),
             ),
             label: 'Bookmarks',
-          ),
-          BottomNavigationBarItem(
-            icon: Opacity(
-              opacity: _calculateSelectedIndex(context) == 3 ? 1.0 : 0.4,
-              child: Image.asset(
-                'assets/icons/ic_settings.png',
-                width: 28,
-                height: 28,
-              ),
-            ),
-            label: 'Settings',
           ),
         ],
       ),

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/quran/presentation/screens/quran_menu_screen.dart';
@@ -7,6 +6,9 @@ import '../features/quran/presentation/screens/splash_screen.dart';
 import '../features/quran/presentation/screens/main_screen.dart';
 import '../features/quran/presentation/screens/home_screen.dart';
 import '../features/quran/presentation/screens/bookmarks_screen.dart';
+import '../features/hadith/presentation/screens/hadith_picker_screen.dart';
+import '../features/hadith/presentation/screens/hadith_chapters_screen.dart';
+import '../features/hadith/presentation/screens/hadith_reader_screen.dart';
 import 'constants/app_constants.dart';
 
 // Top-level router instance used by MaterialApp.router
@@ -23,13 +25,34 @@ final GoRouter appRouter = GoRouter(
           builder: (context, state) => const QuranMenuScreen(),
         ),
         GoRoute(
-          path: '/bookmarks',
-          builder: (context, state) => const BookmarksScreen(),
+          path: '/hadith',
+          builder: (context, state) => const HadithPickerScreen(),
+          routes: [
+            GoRoute(
+              path: ':bookKey',
+              builder: (context, state) {
+                final bookKey = state.pathParameters['bookKey']!;
+                return HadithChaptersScreen(bookKey: bookKey);
+              },
+              routes: [
+                GoRoute(
+                  path: ':chapterNumber',
+                  builder: (context, state) {
+                    final bookKey = state.pathParameters['bookKey']!;
+                    final chapterNumber = int.parse(state.pathParameters['chapterNumber']!);
+                    return HadithReaderScreen(
+                      bookKey: bookKey,
+                      chapterNumber: chapterNumber,
+                    );
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
         GoRoute(
-          path: '/settings',
-          builder: (context, state) =>
-              const Scaffold(body: Center(child: Text('Settings'))),
+          path: '/bookmarks',
+          builder: (context, state) => const BookmarksScreen(),
         ),
       ],
     ),
