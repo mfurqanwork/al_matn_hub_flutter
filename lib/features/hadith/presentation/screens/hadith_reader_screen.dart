@@ -47,27 +47,28 @@ class _HadithReaderScreenState extends ConsumerState<HadithReaderScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        toolbarHeight: 70, // Increased to accommodate wrapping
         title: hadithsAsync.maybeWhen(
           data: (hadiths) {
-            final chapterTitle = hadiths.isNotEmpty ? hadiths.first.displayChapterTitle : null;
+            final chapterTitle = hadiths.isNotEmpty
+                ? hadiths.first.displayChapterTitle
+                : null;
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   bookTitles[widget.bookKey] ?? 'Hadith',
                   style: const TextStyle(
-                    fontSize: 11, // Even smaller
-                    color: Colors.grey,
-                    fontWeight: FontWeight.normal,
+                    fontSize: 14, // Even smaller
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  chapterTitle != null 
-                    ? 'Chapter ${widget.chapterNumber}: $chapterTitle'
-                    : 'Chapter ${widget.chapterNumber}',
+                  chapterTitle != null
+                      ? 'Chapter ${widget.chapterNumber}: $chapterTitle'
+                      : 'Chapter ${widget.chapterNumber}',
                   style: const TextStyle(
-                    fontSize: 14, // Smaller
+                    fontSize: 12, // Smaller
+                    color: Colors.grey,
                     fontWeight: FontWeight.bold,
                     height: 1.2,
                   ),
@@ -84,12 +85,15 @@ class _HadithReaderScreenState extends ConsumerState<HadithReaderScreen> {
                 style: const TextStyle(
                   fontSize: 12,
                   color: Colors.grey,
-                  fontWeight: FontWeight.normal,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 'Chapter ${widget.chapterNumber}',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -98,10 +102,8 @@ class _HadithReaderScreenState extends ConsumerState<HadithReaderScreen> {
         foregroundColor: const Color(0xFF1A1A1A),
         elevation: 0,
         centerTitle: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => context.pop(),
-        ),
+        automaticallyImplyLeading: false,
+        titleSpacing: 20,
         actions: [
           hadithsAsync.when(
             data: (hadiths) {
@@ -112,20 +114,41 @@ class _HadithReaderScreenState extends ConsumerState<HadithReaderScreen> {
                   .watch(hadithReaderNotifierProvider.notifier)
                   .isBookmarked(currentHadith.Reference ?? '');
 
-              return IconButton(
-                icon: Icon(
-                  isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                  color: isBookmarked ? const Color(0xFF007A33) : Colors.black,
-                ),
-                onPressed: () => ref
-                    .read(hadithReaderNotifierProvider.notifier)
-                    .toggleBookmark(currentHadith),
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                      color: isBookmarked
+                          ? const Color(0xFF007A33)
+                          : Colors.black,
+                    ),
+                    onPressed: () => ref
+                        .read(hadithReaderNotifierProvider.notifier)
+                        .toggleBookmark(currentHadith),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.black,
+                      size: 24,
+                    ),
+                    onPressed: () => context.pop(),
+                  ),
+                  const SizedBox(width: 8),
+                ],
               );
             },
-            loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
+            loading: () => IconButton(
+              icon: const Icon(Icons.close, color: Colors.black, size: 24),
+              onPressed: () => context.pop(),
+            ),
+            error: (_, __) => IconButton(
+              icon: const Icon(Icons.close, color: Colors.black, size: 24),
+              onPressed: () => context.pop(),
+            ),
           ),
-          const SizedBox(width: 8),
         ],
       ),
       body: hadithsAsync.when(
@@ -276,7 +299,11 @@ class _HadithReaderScreenState extends ConsumerState<HadithReaderScreen> {
                                   ),
                                 if (index == hadiths.length - 1 &&
                                     nextPrev.next != null)
-                                  _buildNavButton(context, nextPrev.next!, true),
+                                  _buildNavButton(
+                                    context,
+                                    nextPrev.next!,
+                                    true,
+                                  ),
                                 const SizedBox(height: 40),
                               ],
                             ),
@@ -302,22 +329,32 @@ class _HadithReaderScreenState extends ConsumerState<HadithReaderScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: InkWell(
-        onTap: () => context.pushReplacement('/hadith/${widget.bookKey}/$targetChapter'),
+        onTap: () =>
+            context.pushReplacement('/hadith/${widget.bookKey}/$targetChapter'),
         borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 20),
           decoration: BoxDecoration(
-            color: isNext ? const Color(0xFF007A33).withOpacity(0.05) : Colors.grey.shade50,
+            color: isNext
+                ? const Color(0xFF007A33).withOpacity(0.05)
+                : Colors.grey.shade50,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isNext ? const Color(0xFF007A33).withOpacity(0.1) : Colors.grey.shade200,
+              color: isNext
+                  ? const Color(0xFF007A33).withOpacity(0.1)
+                  : Colors.grey.shade200,
               width: 1.5,
             ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (!isNext) const Icon(Icons.arrow_back_ios_new, size: 16, color: Colors.black54),
+              if (!isNext)
+                const Icon(
+                  Icons.arrow_back_ios_new,
+                  size: 16,
+                  color: Colors.black54,
+                ),
               if (!isNext) const SizedBox(width: 12),
               Column(
                 children: [
@@ -331,15 +368,17 @@ class _HadithReaderScreenState extends ConsumerState<HadithReaderScreen> {
                   ),
                   Text(
                     'Continue to Chapter $targetChapter',
-                    style: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontSize: 12,
-                    ),
+                    style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
                   ),
                 ],
               ),
               if (isNext) const SizedBox(width: 12),
-              if (isNext) const Icon(Icons.arrow_forward_ios, size: 16, color: Color(0xFF007A33)),
+              if (isNext)
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: Color(0xFF007A33),
+                ),
             ],
           ),
         ),

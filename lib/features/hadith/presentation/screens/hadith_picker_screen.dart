@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:al_matn_hub_flutter/core/utils/hadith_helpers.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../domain/providers/hadith_providers.dart';
 
 class HadithPickerScreen extends ConsumerWidget {
@@ -9,6 +9,7 @@ class HadithPickerScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final books = [
       {
         'name': 'Sahih al-Bukhari',
@@ -44,8 +45,23 @@ class HadithPickerScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hadith'),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset('assets/icons/logo.png', width: 28, height: 28),
+            const SizedBox(width: 8),
+            Text(
+              'Hadith',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontFamily: 'Amiri',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
         centerTitle: false,
+        automaticallyImplyLeading: false,
+        titleSpacing: 20,
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF1A1A1A),
         elevation: 0,
@@ -71,84 +87,91 @@ class HadithPickerScreen extends ConsumerWidget {
 
                   final bookName = bookTitles[lastRead['bookKey']] ?? 'Hadith';
 
-                  return Container(
-                    margin: const EdgeInsets.all(20),
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF007A33), Color(0xFF00A344)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                    child: InkWell(
+                      onTap: () => context.push(
+                        '/hadith/${lastRead['bookKey']}/${lastRead['chapterNumber']}',
                       ),
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF007A33).withOpacity(0.3),
-                          blurRadius: 15,
-                          offset: const Offset(0, 8),
+                      child: Container(
+                        height: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF007A33).withOpacity(0.3),
+                              blurRadius: 16,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: () => context.push(
-                          '/hadith/${lastRead['bookKey']}/${lastRead['chapterNumber']}',
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Row(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Stack(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.history_rounded,
-                                  color: Colors.white,
-                                  size: 28,
+                              Positioned.fill(
+                                child: SvgPicture.asset(
+                                  'assets/icons/home_bg.svg',
+                                  fit: BoxFit.cover,
                                 ),
                               ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 16,
+                                ),
+                                child: Row(
                                   children: [
-                                    const Text(
-                                      'Continue Reading',
-                                      style: TextStyle(
-                                        color: Colors.white70,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 0.5,
+                                    Container(
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.2),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Image.asset(
+                                        'assets/icons/ic_quran.png',
+                                        width: 24,
+                                        height: 24,
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      bookName,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Text(
+                                            'Continue Reading',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            '$bookName · Ch ${lastRead['chapterNumber']} · ${lastRead['reference'].split(':').last}',
+                                            style: const TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    Text(
-                                      'Chapter ${lastRead['chapterNumber']} · ${formatHadithReference(lastRead['reference'])}',
-                                      style: const TextStyle(
-                                        color: Colors.white70,
-                                        fontSize: 13,
-                                      ),
+                                    const Icon(
+                                      Icons.arrow_forward_ios_rounded,
+                                      color: Colors.white,
+                                      size: 18,
                                     ),
                                   ],
                                 ),
-                              ),
-                              const Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.white70,
-                                size: 16,
                               ),
                             ],
                           ),

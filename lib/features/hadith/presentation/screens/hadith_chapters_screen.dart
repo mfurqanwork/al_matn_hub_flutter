@@ -11,6 +11,7 @@ class HadithChaptersScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final chaptersAsync = ref.watch(chaptersProvider(bookKey));
 
     final bookTitles = {
@@ -25,8 +26,30 @@ class HadithChaptersScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: Text('${bookTitles[bookKey]}'),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset('assets/icons/logo.png', width: 28, height: 28),
+            const SizedBox(width: 8),
+            Text(
+              '${bookTitles[bookKey]}',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontFamily: 'Amiri',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        titleSpacing: 20, // Give some space for the logo-title group
         centerTitle: false,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close, color: Colors.black, size: 24),
+            onPressed: () => context.pop(),
+          ),
+          const SizedBox(width: 8),
+        ],
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF1A1A1A),
         elevation: 0,

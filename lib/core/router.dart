@@ -23,6 +23,17 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/quran',
           builder: (context, state) => const QuranMenuScreen(),
+          routes: [
+            GoRoute(
+              path: 'reader',
+              builder: (context, state) {
+                final pageParam = state.uri.queryParameters['page'];
+                final page = int.tryParse(pageParam ?? '') ?? 1;
+                final clamped = page.clamp(1, AppConstants.totalPages);
+                return QuranReaderScreen(initialPage: clamped);
+              },
+            ),
+          ],
         ),
         GoRoute(
           path: '/hadith',
@@ -39,7 +50,9 @@ final GoRouter appRouter = GoRouter(
                   path: ':chapterNumber',
                   builder: (context, state) {
                     final bookKey = state.pathParameters['bookKey']!;
-                    final chapterNumber = int.parse(state.pathParameters['chapterNumber']!);
+                    final chapterNumber = int.parse(
+                      state.pathParameters['chapterNumber']!,
+                    );
                     return HadithReaderScreen(
                       bookKey: bookKey,
                       chapterNumber: chapterNumber,
@@ -55,15 +68,6 @@ final GoRouter appRouter = GoRouter(
           builder: (context, state) => const BookmarksScreen(),
         ),
       ],
-    ),
-    GoRoute(
-      path: '/quran/reader',
-      builder: (context, state) {
-        final pageParam = state.uri.queryParameters['page'];
-        final page = int.tryParse(pageParam ?? '') ?? 1;
-        final clamped = page.clamp(1, AppConstants.totalPages);
-        return QuranReaderScreen(initialPage: clamped);
-      },
     ),
   ],
 );

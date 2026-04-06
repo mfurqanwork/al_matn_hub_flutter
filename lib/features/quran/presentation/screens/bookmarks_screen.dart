@@ -11,6 +11,7 @@ class BookmarksScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final quranReaderAsync = ref.watch(quranReaderNotifierProvider);
     final hadithReaderAsync = ref.watch(hadithReaderNotifierProvider);
 
@@ -23,13 +24,18 @@ class BookmarksScreen extends ConsumerWidget {
             children: [
               Image.asset('assets/icons/logo.png', width: 28, height: 28),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'Bookmarks',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontFamily: 'Amiri',
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
           centerTitle: false,
+          automaticallyImplyLeading: false,
+          titleSpacing: 20,
           bottom: const TabBar(
             indicatorColor: Color(0xFF007A33),
             labelColor: Color(0xFF007A33),
@@ -133,7 +139,9 @@ class BookmarksScreen extends ConsumerWidget {
               bookName,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            subtitle: Text('Chapter ${h.Chapter_Number} · ${h.formattedReference}'),
+            subtitle: Text(
+              'Chapter ${h.Chapter_Number} · ${h.formattedReference}',
+            ),
             trailing: IconButton(
               icon: const Icon(Icons.delete_outline, color: Colors.red),
               onPressed: () => ref
