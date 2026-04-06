@@ -23,19 +23,23 @@ final chaptersProvider = FutureProvider.family<List<Map<String, dynamic>>, Strin
 class HadithReaderState {
   final Map<String, dynamic>? lastRead;
   final List<Hadith> bookmarks;
+  final bool autoTracingEnabled;
 
   const HadithReaderState({
     this.lastRead,
     this.bookmarks = const [],
+    this.autoTracingEnabled = true,
   });
 
   HadithReaderState copyWith({
     Map<String, dynamic>? lastRead,
     List<Hadith>? bookmarks,
+    bool? autoTracingEnabled,
   }) {
     return HadithReaderState(
       lastRead: lastRead ?? this.lastRead,
       bookmarks: bookmarks ?? this.bookmarks,
+      autoTracingEnabled: autoTracingEnabled ?? this.autoTracingEnabled,
     );
   }
 }
@@ -46,7 +50,21 @@ class HadithReaderNotifier extends AsyncNotifier<HadithReaderState> {
     final repo = ref.watch(hadithRepositoryProvider);
     final lastRead = await repo.getLastRead();
     final bookmarks = await repo.getBookmarks();
-    return HadithReaderState(lastRead: lastRead, bookmarks: bookmarks);
+    final autoTracing = await repo.getAutoTracing();
+    return HadithReaderState(
+      lastRead: lastRead,
+      bookmarks: bookmarks,
+      autoTracingEnabled: autoTracing,
+    );
+  }
+
+  Future<void> toggleAutoTracing() async {
+    final repo = ref.read(hadithRepositoryProvider);
+    final current = state.value;
+    if (current == null) return;
+    final newValue = !current.autoTracingEnabled;
+    await repo.setAutoTracing(newValue);
+    state = AsyncValue.data(current.copyWith(autoTracingEnabled: newValue));
   }
 
   Future<void> saveProgress({
@@ -55,21 +73,26 @@ class HadithReaderNotifier extends AsyncNotifier<HadithReaderState> {
     required int hadithIndex,
     required String reference,
   }) async {
-    final repo = ref.read(hadithRepositoryProvider);
-    await repo.saveLastRead(
-      bookKey: bookKey,
-      chapterNumber: chapterNumber,
-      hadithIndex: hadithIndex,
-      reference: reference,
-    );
-    state = AsyncValue.data(state.value!.copyWith(
-      lastRead: {
+    final current = state.value;
+    if (current == null) return;
+
+    if (current.autoTracingEnabled) {
+      final repo = ref.read(hadithRepositoryProvider);
+      final newLastRead = {
         'bookKey': bookKey,
         'chapterNumber': chapterNumber,
         'hadithIndex': hadithIndex,
         'reference': reference,
-      },
-    ));
+      };
+
+      state = AsyncValue.data(current.copyWith(lastRead: newLastRead));
+      await repo.saveLastRead(
+        bookKey: bookKey,
+        chapterNumber: chapterNumber,
+        hadithIndex: hadithIndex,
+        reference: reference,
+      );
+    }
   }
 
   Future<void> toggleBookmark(Hadith hadith) async {

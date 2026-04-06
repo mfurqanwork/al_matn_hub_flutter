@@ -183,7 +183,49 @@ class HadithPickerScreen extends ConsumerWidget {
                 loading: () => const SizedBox.shrink(),
                 error: (_, __) => const SizedBox.shrink(),
               ),
-
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.shade100),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.history_toggle_off_rounded,
+                    size: 20,
+                    color: Colors.grey.shade600,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Auto Track Last Read',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade800,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Switch.adaptive(
+                    value:
+                        ref
+                            .watch(hadithReaderNotifierProvider)
+                            .value
+                            ?.autoTracingEnabled ??
+                        true,
+                    activeColor: const Color(0xFF007A33),
+                    onChanged: (val) => ref
+                        .read(hadithReaderNotifierProvider.notifier)
+                        .toggleAutoTracing(),
+                  ),
+                ],
+              ),
+            ),
+          ),
           Expanded(
             child: GridView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),

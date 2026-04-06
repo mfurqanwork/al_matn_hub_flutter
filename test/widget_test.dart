@@ -27,8 +27,10 @@ void main() {
   group('ReaderState', () {
     const initial = ReaderState(
       currentPage: 1,
+      lastReadPage: 1,
       controlsVisible: true,
       bookmarks: [],
+      autoTracingEnabled: true,
     );
 
     test('copyWith updates only the provided fields', () {

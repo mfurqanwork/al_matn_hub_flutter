@@ -12,4 +12,6 @@ abstract final class AppConstants {
   // ── SharedPreferences keys ──────────────────────────────────────────────
   static const String prefLastReadPage = 'last_read_page';
   static const String prefBookmarks = 'bookmarks';
+  static const String prefQuranAutoTracing = 'quran_auto_tracing';
+  static const String prefHadithAutoTracing = 'hadith_auto_tracing';
 }

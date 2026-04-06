@@ -15,7 +15,7 @@ class QuranMenuScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final readerState = ref.watch(quranReaderNotifierProvider);
-    final lastReadPage = readerState.value?.currentPage ?? 1;
+    final lastReadPage = readerState.value?.lastReadPage ?? 1;
     final lastReadLabel = pageOverlayLabel(lastReadPage);
 
     return DefaultTabController(
@@ -126,11 +126,51 @@ class QuranMenuScreen extends ConsumerWidget {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 2),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 0,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.grey.shade100),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.history_toggle_off_rounded,
+                      size: 20,
+                      color: Colors.grey.shade600,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Auto Track Last Read',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade800,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Switch.adaptive(
+                      value: readerState.value?.autoTracingEnabled ?? true,
+                      activeColor: const Color(0xFF007A33),
+                      onChanged: (val) => ref
+                          .read(quranReaderNotifierProvider.notifier)
+                          .toggleAutoTracing(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             TabBar(
               labelColor: theme.colorScheme.primary,
               unselectedLabelColor: Colors.grey,
               indicatorColor: theme.colorScheme.primary,
-
               tabs: const [
                 Tab(text: 'Surahs'),
                 Tab(text: 'Juz'),

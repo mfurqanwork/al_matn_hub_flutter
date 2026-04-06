@@ -11,23 +11,31 @@ import '../../../../core/constants/app_constants.dart';
 class ReaderState {
   const ReaderState({
     required this.currentPage,
+    required this.lastReadPage,
     required this.controlsVisible,
     required this.bookmarks,
+    required this.autoTracingEnabled,
   });
 
   final int currentPage;
+  final int lastReadPage;
   final bool controlsVisible;
   final List<int> bookmarks;
+  final bool autoTracingEnabled;
 
   ReaderState copyWith({
     int? currentPage,
+    int? lastReadPage,
     bool? controlsVisible,
     List<int>? bookmarks,
+    bool? autoTracingEnabled,
   }) {
     return ReaderState(
       currentPage: currentPage ?? this.currentPage,
+      lastReadPage: lastReadPage ?? this.lastReadPage,
       controlsVisible: controlsVisible ?? this.controlsVisible,
       bookmarks: bookmarks ?? this.bookmarks,
+      autoTracingEnabled: autoTracingEnabled ?? this.autoTracingEnabled,
     );
   }
 
@@ -52,10 +60,14 @@ class QuranReaderNotifier extends AsyncNotifier<ReaderState> {
     final lastPage =
         _prefs?.getInt(AppConstants.prefLastReadPage) ?? _fallbackLastPage;
     final bookmarks = _loadBookmarks();
+    final autoTracing = _prefs?.getBool(AppConstants.prefQuranAutoTracing) ?? true;
+
     return ReaderState(
       currentPage: lastPage,
+      lastReadPage: lastPage,
       controlsVisible: true,
       bookmarks: bookmarks,
+      autoTracingEnabled: autoTracing,
     );
   }
 
@@ -64,9 +76,26 @@ class QuranReaderNotifier extends AsyncNotifier<ReaderState> {
   void updatePage(int page) {
     final current = state.value;
     if (current == null) return;
-    state = AsyncData(current.copyWith(currentPage: page));
-    _fallbackLastPage = page;
-    _prefs?.setInt(AppConstants.prefLastReadPage, page);
+    
+    // Always update the reader's current page in-memory
+    ReaderState newState = current.copyWith(currentPage: page);
+    
+    // Only update the lastReadPage and persist if auto-tracing is enabled
+    if (current.autoTracingEnabled) {
+      newState = newState.copyWith(lastReadPage: page);
+      _prefs?.setInt(AppConstants.prefLastReadPage, page);
+      _fallbackLastPage = page;
+    }
+    
+    state = AsyncData(newState);
+  }
+
+  void toggleAutoTracing() {
+    final current = state.value;
+    if (current == null) return;
+    final newValue = !current.autoTracingEnabled;
+    state = AsyncData(current.copyWith(autoTracingEnabled: newValue));
+    _prefs?.setBool(AppConstants.prefQuranAutoTracing, newValue);
   }
 
   // ── Controls visibility ───────────────────────────────────────────────────

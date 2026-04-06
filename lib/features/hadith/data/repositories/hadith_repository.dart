@@ -122,4 +122,16 @@ class HadithRepository {
     final bookmarksData = box.get('bookmarks', defaultValue: <dynamic>[]);
     return List<dynamic>.from(bookmarksData).cast<Hadith>();
   }
+
+  Future<bool> getAutoTracing() async {
+    await init();
+    final box = Hive.box(stateBoxName);
+    return box.get('autoTracing', defaultValue: true) as bool;
+  }
+
+  Future<void> setAutoTracing(bool enabled) async {
+    await init();
+    final box = Hive.box(stateBoxName);
+    await box.put('autoTracing', enabled);
+  }
 }
