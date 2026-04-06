@@ -72,8 +72,8 @@ class HadithRepository {
     }
 
     return allHadiths.where((h) => 
-      h.English_Text.toLowerCase().contains(query.toLowerCase()) || 
-      h.Arabic_Text.contains(query)
+      h.cleanEnglish.toLowerCase().contains(query.toLowerCase()) || 
+      h.cleanArabic.contains(query)
     ).toList();
   }
   Future<void> saveLastRead({

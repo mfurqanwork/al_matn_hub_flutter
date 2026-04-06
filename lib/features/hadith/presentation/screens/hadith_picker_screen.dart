@@ -44,8 +44,8 @@ class HadithPickerScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hadith Books'),
-        centerTitle: true,
+        title: const Text('Hadith'),
+        centerTitle: false,
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF1A1A1A),
         elevation: 0,

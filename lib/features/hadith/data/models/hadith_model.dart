@@ -31,7 +31,7 @@ class Hadith {
       Chapter_Title_Arabic: json['Chapter_Title_Arabic'] as String?,
       Chapter_Title_English: json['Chapter_Title_English'] as String?,
       Arabic_Text: json['Arabic_Text'] as String,
-      English_Text: json['English_Text'] as String,
+      English_Text: cleanHadithText(json['English_Text'] as String),
       Grade: json['Grade'] as String?,
       Reference: json['Reference'] as String?,
       In_book_reference: json['In_book_reference'] as String?,
@@ -78,6 +78,9 @@ class Hadith {
     if (Chapter_Title_English == null) return null;
     return cleanChapterTitle(Chapter_Title_English!);
   }
+
+  String get cleanEnglish => cleanHadithText(English_Text);
+  String get cleanArabic => cleanHadithText(Arabic_Text);
 }
 
 class HadithAdapter extends TypeAdapter<Hadith> {

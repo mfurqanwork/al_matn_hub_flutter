@@ -25,7 +25,8 @@ class HadithChaptersScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: Text('${bookTitles[bookKey]} Chapters'),
+        title: Text('${bookTitles[bookKey]}'),
+        centerTitle: false,
         backgroundColor: Colors.white,
         foregroundColor: const Color(0xFF1A1A1A),
         elevation: 0,

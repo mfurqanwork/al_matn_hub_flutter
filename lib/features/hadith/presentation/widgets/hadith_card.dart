@@ -39,7 +39,7 @@ class HadithCard extends StatelessWidget {
 
             // English text
             Text(
-              hadith.English_Text,
+              hadith.cleanEnglish,
               style: const TextStyle(
                 fontSize: 15,
                 height: 1.6,

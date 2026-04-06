@@ -25,6 +25,11 @@ String cleanChapterTitle(String title) {
   return title;
 }
 
+/// Removes extra whitespaces and newlines from text.
+String cleanHadithText(String text) {
+  return text.replaceAll(RegExp(r'\s+'), ' ').trim();
+}
+
 Color getGradeColor(String? grade) {
   if (grade == null) return const Color(0xFF6B7280); // Gray-500
   final lower = grade.toLowerCase();
