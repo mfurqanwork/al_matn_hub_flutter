@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../providers/quran_reader_notifier.dart';
 import '../../../../core/utils/quran_helpers.dart';
+import '../../../hadith/domain/providers/hadith_providers.dart';
+import '../../../../core/widgets/continue_reading_banner.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -12,9 +13,11 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final readerState = ref.watch(quranReaderNotifierProvider);
-
-    final lastReadPage = readerState.value?.currentPage ?? 1;
+    final lastReadPage = readerState.value?.lastReadPage ?? 1;
     final lastReadLabel = pageOverlayLabel(lastReadPage);
+
+    final hadithState = ref.watch(hadithReaderNotifierProvider).value;
+    final lastHadith = hadithState?.lastRead;
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
@@ -42,90 +45,29 @@ class HomeScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Modern Welcome Banner
-            Container(
-              width: double.infinity,
-              height: 220,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF007A33).withOpacity(0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
+            // ── Continue Reading Section ─────────────────────────────────────
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ContinueReadingBanner(
+                  title: 'Continue Quran',
+                  subtitle: '$lastReadLabel · Page $lastReadPage',
+                  icon: 'assets/icons/ic_quran.png',
+                  onTap: () => context.go('/quran/reader?page=$lastReadPage'),
+                ),
+                if (lastHadith != null) ...[
+                  const SizedBox(height: 12),
+                  ContinueReadingBanner(
+                    title: 'Continue Hadith',
+                    subtitle:
+                        '${_getBookTitle(lastHadith['bookKey'])} · Ch ${lastHadith['chapterNumber']}',
+                    icon: 'assets/icons/ic_quran.png',
+                    onTap: () => context.go(
+                      '/hadith/${lastHadith['bookKey']}/${lastHadith['chapterNumber']}',
+                    ),
                   ),
                 ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: SvgPicture.asset(
-                        'assets/icons/home_bg.svg',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Continue Reading...',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              Image.asset(
-                                'assets/icons/ic_quran.png',
-                                width: 22,
-                                height: 22,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                '$lastReadLabel · Page $lastReadPage',
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 15,
-                                  fontFamily: 'Amiri',
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: () =>
-                                context.go('/quran/reader?page=$lastReadPage'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: const Color(0xFF007A33),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                                vertical: 12,
-                              ),
-                            ),
-                            child: const Text(
-                              'Resume Reading',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              ],
             ),
             const SizedBox(height: 32),
             Text(
@@ -164,6 +106,25 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+String _getBookTitle(String key) {
+  switch (key) {
+    case 'bukhari':
+      return 'Sahih al-Bukhari';
+    case 'muslim':
+      return 'Sahih Muslim';
+    case 'abu_dawud':
+      return 'Sunan Abi Dawud';
+    case 'tirmidhi':
+      return 'Jami\' at-Tirmidhi';
+    case 'nasai':
+      return 'Sunan an-Nasa\'i';
+    case 'ibn_majah':
+      return 'Sunan Ibn Majah';
+    default:
+      return 'Hadith Book';
   }
 }
 

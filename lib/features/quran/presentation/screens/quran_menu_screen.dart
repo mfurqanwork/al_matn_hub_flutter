@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../providers/quran_menu_provider.dart';
 import '../providers/quran_reader_notifier.dart';
 import '../../../../core/utils/quran_helpers.dart';
 import '../widgets/surah_list_tile.dart';
+import '../../../../core/widgets/continue_reading_banner.dart';
 
 class QuranMenuScreen extends ConsumerWidget {
   const QuranMenuScreen({super.key});
@@ -42,88 +42,11 @@ class QuranMenuScreen extends ConsumerWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: InkWell(
+              child: ContinueReadingBanner(
+                title: 'Continue Reading',
+                subtitle: '$lastReadLabel · Page $lastReadPage',
+                icon: 'assets/icons/ic_quran.png',
                 onTap: () => _openReader(context, lastReadPage),
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  height: 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF007A33).withOpacity(0.3),
-                        blurRadius: 16,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: SvgPicture.asset(
-                            'assets/icons/home_bg.svg',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 16,
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.2),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Image.asset(
-                                  'assets/icons/ic_quran.png',
-                                  width: 24,
-                                  height: 24,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      'Continue Reading',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      '$lastReadLabel · Page $lastReadPage',
-                                      style: const TextStyle(
-                                        color: Colors.white70,
-                                        fontSize: 14,
-                                        fontFamily: 'Amiri',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const Icon(
-                                Icons.arrow_forward_ios_rounded,
-                                color: Colors.white,
-                                size: 18,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               ),
             ),
             Padding(
