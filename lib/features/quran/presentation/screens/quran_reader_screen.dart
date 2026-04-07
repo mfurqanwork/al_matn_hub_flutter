@@ -136,32 +136,23 @@ class _QuranReaderScreenState extends ConsumerState<QuranReaderScreen> {
         top: false,
         child: Column(
           children: [
-            // ── Mushaf Page Header Image ──────────────────────────────
-            _MushafPageHeader(),
-
             // ── QCF Page Content ──────────────────────────────────────
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 4, bottom: 2),
-                child: QuranPageView(
-                  pageController: _externalController,
-                  highlights: const [],
-                  isDarkMode: Theme.of(context).brightness == Brightness.dark,
-                  isTajweed: false,
-                  onPageChanged: (p) {
-                    ref
-                        .read(quranReaderNotifierProvider.notifier)
-                        .updatePage(p);
-                  },
-                  onLongPress: (surahNumber, verseNumber, details) {
-                    // Optional features
-                  },
-                ),
+              child: QuranPageView(
+                pageController: _externalController,
+                highlights: const [],
+                isDarkMode: Theme.of(context).brightness == Brightness.dark,
+                isTajweed: false,
+                topBar: _MushafPageHeader(),
+                bottomBar: _MushafFooter(),
+                onPageChanged: (p) {
+                  ref.read(quranReaderNotifierProvider.notifier).updatePage(p);
+                },
+                onLongPress: (surahNumber, verseNumber, details) {
+                  // Optional features
+                },
               ),
             ),
-
-            // ── Mushaf Footer ──────────────────────────────────────────
-            const _MushafFooter(),
           ],
         ),
       ),
@@ -181,19 +172,12 @@ class _MushafPageHeader extends StatelessWidget {
 }
 
 class _MushafFooter extends StatelessWidget {
-  const _MushafFooter({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Image.asset(
+      'assets/icons/quran_page_footer.png',
       width: double.infinity,
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 0.0),
-      child: Image.asset(
-        'assets/icons/quran_page_footer.png',
-        width: double.infinity,
-        fit: BoxFit.fitWidth,
-      ),
+      fit: BoxFit.fitWidth,
     );
   }
 }

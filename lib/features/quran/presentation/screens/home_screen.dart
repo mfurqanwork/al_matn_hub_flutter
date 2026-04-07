@@ -60,7 +60,7 @@ class HomeScreen extends ConsumerWidget {
                   ContinueReadingBanner(
                     title: 'Continue Hadith',
                     subtitle:
-                        '${_getBookTitle(lastHadith['bookKey'])} · Ch ${lastHadith['chapterNumber']}',
+                        '${_getBookTitle(lastHadith['bookKey'])} · Ch ${lastHadith['chapterNumber']} · ${lastHadith['reference'].split(':').last}',
                     icon: 'assets/icons/ic_quran.png',
                     onTap: () => context.go(
                       '/hadith/${lastHadith['bookKey']}/${lastHadith['chapterNumber']}',

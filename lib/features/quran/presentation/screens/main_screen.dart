@@ -43,6 +43,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const double iconSizeNavBar = 32.0;
+
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: BottomNavigationBar(
@@ -51,14 +53,15 @@ class _MainScreenState extends State<MainScreen> {
         onTap: (index) => _onItemTapped(index, context),
         selectedItemColor: const Color(0xFF007A33),
         unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.white70,
         items: [
           BottomNavigationBarItem(
             icon: Opacity(
               opacity: _calculateSelectedIndex(context) == 0 ? 1.0 : 0.4,
               child: Image.asset(
                 'assets/icons/ic_home.png',
-                width: 28,
-                height: 28,
+                width: iconSizeNavBar,
+                height: iconSizeNavBar,
               ),
             ),
             label: 'Home',
@@ -68,8 +71,8 @@ class _MainScreenState extends State<MainScreen> {
               opacity: _calculateSelectedIndex(context) == 1 ? 1.0 : 0.4,
               child: Image.asset(
                 'assets/icons/ic_quran.png',
-                width: 28,
-                height: 28,
+                width: iconSizeNavBar,
+                height: iconSizeNavBar,
               ),
             ),
             label: 'Quran',
@@ -79,8 +82,8 @@ class _MainScreenState extends State<MainScreen> {
               opacity: _calculateSelectedIndex(context) == 2 ? 1.0 : 0.4,
               child: Image.asset(
                 'assets/icons/ic_quran.png', // Same icon as quran
-                width: 28,
-                height: 28,
+                width: iconSizeNavBar,
+                height: iconSizeNavBar,
               ),
             ),
             label: 'Hadith',
@@ -90,8 +93,8 @@ class _MainScreenState extends State<MainScreen> {
               opacity: _calculateSelectedIndex(context) == 3 ? 1.0 : 0.4,
               child: Image.asset(
                 'assets/icons/ic_bookmark.png',
-                width: 28,
-                height: 28,
+                width: iconSizeNavBar,
+                height: iconSizeNavBar,
               ),
             ),
             label: 'Bookmarks',

@@ -15,31 +15,37 @@ class HadithPickerScreen extends ConsumerWidget {
         'name': 'Sahih al-Bukhari',
         'key': 'bukhari',
         'color': const Color(0xFF007A33),
+        'image': 'assets/images/hadith_books/bukhari.png',
       },
       {
         'name': 'Sahih Muslim',
         'key': 'muslim',
         'color': const Color(0xFF007A33),
+        'image': 'assets/images/hadith_books/muslim.png',
       },
       {
         'name': 'Sunan Abi Dawud',
         'key': 'abu_dawud',
         'color': const Color(0xFFB8860B),
+        'image': 'assets/images/hadith_books/abu_dawud.png',
       },
       {
         'name': 'Jami\' at-Tirmidhi',
         'key': 'tirmidhi',
         'color': const Color(0xFFB8860B),
+        'image': 'assets/images/hadith_books/tirmidhi.png',
       },
       {
         'name': 'Sunan an-Nasa\'i',
         'key': 'nasai',
         'color': const Color(0xFF8B4513),
+        'image': 'assets/images/hadith_books/nasai.png',
       },
       {
         'name': 'Sunan Ibn Majah',
         'key': 'ibn_majah',
         'color': const Color(0xFF8B4513),
+        'image': 'assets/images/hadith_books/ibn_majah.png',
       },
     ];
 
@@ -69,7 +75,9 @@ class HadithPickerScreen extends ConsumerWidget {
       body: Column(
         children: [
           // Continue Reading Banner
-          ref.watch(hadithReaderNotifierProvider).when(
+          ref
+              .watch(hadithReaderNotifierProvider)
+              .when(
                 data: (state) {
                   if (state.lastRead == null) return const SizedBox.shrink();
 
@@ -161,6 +169,7 @@ class HadithPickerScreen extends ConsumerWidget {
                 final book = books[index];
                 return _BookCard(
                   name: book['name'] as String,
+                  image: book['image'] as String,
                   color: book['color'] as Color,
                   onTap: () => context.push('/hadith/${book['key']}'),
                 );
@@ -175,11 +184,13 @@ class HadithPickerScreen extends ConsumerWidget {
 
 class _BookCard extends StatelessWidget {
   final String name;
+  final String image;
   final Color color;
   final VoidCallback onTap;
 
   const _BookCard({
     required this.name,
+    required this.image,
     required this.color,
     required this.onTap,
   });
@@ -208,12 +219,25 @@ class _BookCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  shape: BoxShape.circle,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                child: Icon(Icons.menu_book_rounded, color: color, size: 40),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    image,
+                    width: 90,
+                    height: 110,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
               Text(
